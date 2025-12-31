@@ -47,30 +47,49 @@ export const BackgroundRipple = ({
       };
     };
 
-    // Check if position is over excluded elements (text, images)
-    const isOverExcludedElement = (clientX: number, clientY: number): boolean => {
-      const elements = document.elementsFromPoint(clientX, clientY);
+    // Check if a cell area overlaps with text or images
+    const isCellOverContent = (cellX: number, cellY: number): boolean => {
+      const x = cellX * cellSize;
+      const y = cellY * cellSize;
       
-      // Check if clicking directly on text, images, or interactive content
-      for (const element of elements) {
-        // Skip if it's the canvas itself or section/body/html
-        if (element === canvas || element.tagName === 'SECTION' || element.tagName === 'BODY' || element.tagName === 'HTML') continue;
+      // Check center and corners of the cell
+      const checkPoints = [
+        [x + cellSize / 2, y + cellSize / 2], // Center
+        [x + 5, y + 5], // Top-left
+        [x + cellSize - 5, y + 5], // Top-right
+        [x + 5, y + cellSize - 5], // Bottom-left
+        [x + cellSize - 5, y + cellSize - 5], // Bottom-right
+      ];
+      
+      for (const [pointX, pointY] of checkPoints) {
+        const elements = document.elementsFromPoint(pointX, pointY);
         
-        // Only block if clicking directly on these specific elements
-        const isImage = element.tagName === 'IMG';
-        const isButton = element.tagName === 'BUTTON' || element.tagName === 'A';
-        const isTextElement = element.tagName === 'H1' || element.tagName === 'H2' || element.tagName === 'P' || element.tagName === 'SPAN' || element.tagName === 'DIV';
-        
-        // Check if it's a direct text or image element with actual content
-        if (isImage || isButton) {
-          return true;
-        }
-        
-        // For text elements, only block if they're relatively small (direct text, not containers)
-        if (isTextElement) {
-          const rect = element.getBoundingClientRect();
-          const isSmallElement = rect.width < window.innerWidth * 0.8; // Not a full-width container
-          if (isSmallElement) {
+        for (const element of elements) {
+          // Skip canvas and structural elements
+          if (element === canvas || element.tagName === 'CANVAS') continue;
+          
+          // Check for text content elements
+          if (element.tagName === 'H1' || element.tagName === 'H2' || 
+              element.tagName === 'P' || element.tagName === 'SPAN' ||
+              element.tagName === 'LABEL') {
+            // Check if it actually has visible text
+            const hasVisibleText = element.textContent && element.textContent.trim().length > 0;
+            const computedStyle = window.getComputedStyle(element);
+            const isVisible = computedStyle.opacity !== '0' && computedStyle.visibility !== 'hidden';
+            
+            if (hasVisibleText && isVisible) {
+              return true;
+            }
+          }
+          
+          // Check for images
+          if (element.tagName === 'IMG') {
+            return true;
+          }
+          
+          // Check for elements with background images
+          const computedStyle = window.getComputedStyle(element);
+          if (computedStyle.backgroundImage && computedStyle.backgroundImage !== 'none') {
             return true;
           }
         }
@@ -129,29 +148,17 @@ export const BackgroundRipple = ({
       });
     };
 
-    // Touch/Click handler
+    // Touch/Click handler - now accepts all clicks
     const handleInteraction = (e: TouchEvent | MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
       let posX: number, posY: number;
-      let clientX: number, clientY: number;
 
       if ('touches' in e) {
-        // Touch event
-        clientX = e.touches[0].clientX;
-        clientY = e.touches[0].clientY;
-        posX = clientX - rect.left;
-        posY = clientY - rect.top;
+        posX = e.touches[0].clientX - rect.left;
+        posY = e.touches[0].clientY - rect.top;
       } else {
-        // Mouse event
-        clientX = e.clientX;
-        clientY = e.clientY;
-        posX = clientX - rect.left;
-        posY = clientY - rect.top;
-      }
-
-      // Only create ripple if not over text or images
-      if (isOverExcludedElement(clientX, clientY)) {
-        return;
+        posX = e.clientX - rect.left;
+        posY = e.clientY - rect.top;
       }
 
       const cell = getCellFromPosition(posX, posY);
@@ -167,8 +174,8 @@ export const BackgroundRipple = ({
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw grid - subtle like reference image
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.02)";
+      // Draw grid - visible everywhere
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.025)";
       ctx.lineWidth = 1;
 
       // Vertical lines
@@ -205,6 +212,11 @@ export const BackgroundRipple = ({
         if (cell.intensity <= 0) {
           cellsToRemove.push(key);
           return;
+        }
+
+        // ONLY DRAW RIPPLE IF NOT OVER CONTENT
+        if (isCellOverContent(cell.x, cell.y)) {
+          return; // Skip rendering this cell, but keep it in the map for spreading
         }
 
         // Draw cell - simple and clean like reference
