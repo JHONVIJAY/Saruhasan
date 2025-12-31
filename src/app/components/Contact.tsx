@@ -23,7 +23,7 @@ function SplitText({ text, className }: { text: string, className?: string }) {
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-100px" }}
-      className={`${className} flex justify-center overflow-hidden`}
+      className={`${className} flex justify-center flex-wrap`}
     >
       {text.split("").map((char, i) => (
          <motion.span

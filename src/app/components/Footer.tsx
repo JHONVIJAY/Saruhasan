@@ -5,7 +5,7 @@ export function Footer() {
     <footer id="contact" className="relative z-50 bg-[#050505] pt-16 md:pt-24 lg:pt-32 pb-8 md:pb-12 px-4 md:px-8 border-t border-white/10 overflow-hidden">
         <div className="container mx-auto max-w-[1800px] flex flex-col items-center text-center">
             
-            <span className="font-mono text-xs uppercase tracking-widest text-green-500 mb-6 md:mb-8 animate-pulse">
+            <span className="font-mono text-xs uppercase tracking-widest text-sky-500 mb-6 md:mb-8 animate-pulse">
                 ● Open to Opportunities
             </span>
             
@@ -34,12 +34,6 @@ export function Footer() {
             <p className="mt-8 md:mt-12 font-mono text-xs text-white/30">
                 © {new Date().getFullYear()} Saruhasan Sankar. All Rights Reserved.
             </p>
-
-             <div className="mt-4 pointer-events-none select-none w-full overflow-hidden">
-                 <h1 className="text-[18vw] md:text-[14vw] font-black text-[#111] leading-none text-center tracking-tighter">
-                     SARUHASAN
-                 </h1>
-             </div>
 
         </div>
     </footer>

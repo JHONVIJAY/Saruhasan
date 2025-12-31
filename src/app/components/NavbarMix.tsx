@@ -18,8 +18,8 @@ export function NavbarMix() {
         transition={{ delay: 1, duration: 1, ease: [0.16, 1, 0.3, 1] }}
         className="fixed top-0 left-0 right-0 z-50 flex justify-between items-start p-4 md:p-6 lg:p-8 mix-blend-difference text-white pointer-events-none"
     >
-        <div className="pointer-events-auto min-w-[100px] md:min-w-[140px]">
-             <a href="#index" className="block relative h-6 md:h-8 overflow-hidden">
+        <div className="pointer-events-auto min-w-[120px] md:min-w-[140px]">
+             <a href="#index" className="block relative h-8 md:h-8 overflow-hidden">
                 <AnimatePresence mode="wait">
                     {!showAlias ? (
                         <motion.div
@@ -30,7 +30,7 @@ export function NavbarMix() {
                             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                             className="absolute top-0 left-0 origin-left"
                         >
-                            <span className="font-black text-lg md:text-xl tracking-tighter uppercase leading-none">SARUHASAN</span>
+                            <span className="font-black text-lg md:text-xl tracking-tighter uppercase leading-none whitespace-nowrap">SARUHASAN</span>
                         </motion.div>
                     ) : (
                         <motion.div
@@ -41,7 +41,7 @@ export function NavbarMix() {
                             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                             className="absolute top-0 left-0 origin-left"
                         >
-                            <span className="font-black text-lg md:text-xl tracking-tighter uppercase leading-none">JOHN</span>
+                            <span className="font-black text-lg md:text-xl tracking-tighter uppercase leading-none whitespace-nowrap">JOHN</span>
                         </motion.div>
                     )}
                 </AnimatePresence>

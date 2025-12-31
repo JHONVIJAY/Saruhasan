@@ -20,7 +20,7 @@ function SplitText({ text, className, stroke = false }: { text: string, classNam
     <motion.h1 
       initial="hidden"
       animate="visible"
-      className={`${className} flex overflow-hidden`}
+      className={`${className} flex flex-wrap`}
     >
       {text.split("").map((char, i) => (
          <motion.span
@@ -43,15 +43,15 @@ export function HeroSolid() {
   const opacity = useTransform(scrollY, [0, 500], [1, 0]);
 
   return (
-    <section id="index" className="relative w-full min-h-screen bg-[#050505] flex flex-col items-center pt-24 md:pt-32 pb-12 px-4 md:px-8 overflow-hidden">
+    <section id="index" className="relative w-full min-h-screen bg-[#050505] flex flex-col items-center pt-24 md:pt-32 pb-12 px-4 md:px-8 overflow-x-hidden">
       
       {/* BACKGROUND ACCENTS */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-full bg-white/5 z-0" />
       <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white/5 z-0" />
 
       {/* TOP TEXT */}
-      <div className="w-full max-w-[1800px] flex flex-col md:flex-row justify-between items-start md:items-end relative z-10 mb-8 md:mb-12">
-          <div className="flex flex-col">
+      <div className="w-full max-w-[1800px] flex flex-col md:flex-row justify-between items-start md:items-end relative z-10 mb-8 md:mb-12 overflow-visible">
+          <div className="flex flex-col overflow-visible">
               <SplitText 
                 text="SARU" 
                 className="text-[14vw] md:text-[10vw] leading-[0.85] font-black tracking-tighter text-white uppercase mix-blend-exclusion"
@@ -113,7 +113,7 @@ export function HeroSolid() {
              transition={{ delay: 0.8 }}
              className="flex gap-3 md:gap-4 items-center"
            >
-               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+               <div className="w-2 h-2 bg-sky-500 rounded-full animate-pulse" />
                <span className="text-white/60 font-mono text-[10px] md:text-xs uppercase tracking-widest">Available for hire</span>
            </motion.div>
 

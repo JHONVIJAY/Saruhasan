@@ -65,7 +65,7 @@ export function Preloader() {
              className="relative z-20 flex flex-col items-center gap-4 text-white"
              exit={{ opacity: 0, transition: { duration: 0.3 } }}
            >
-              <div className="h-12 md:h-20 overflow-hidden relative">
+              <div className="h-16 md:h-24 flex items-center justify-center relative w-full">
                 <SequenceWords />
               </div>
               
@@ -73,7 +73,7 @@ export function Preloader() {
                 initial={{ width: 0 }}
                 animate={{ width: 200 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="h-[1px] bg-white/20 mt-4 overflow-hidden relative"
+                className="h-[2px] bg-white/20 mt-4 overflow-hidden relative"
               >
                  <motion.div 
                    initial={{ x: "-100%" }}
@@ -91,7 +91,7 @@ export function Preloader() {
 
 function SequenceWords() {
   const [index, setIndex] = useState(0);
-  const words = ["SARUHASAN", "ENGINEER", "JOHN", "CREATIVE", "ARCHITECT"];
+  const words = ["SARUHASAN", "ENGINEER", "JOHN", "DESIGNER"];
   
   useEffect(() => {
     if (index === words.length - 1) return;
@@ -104,7 +104,7 @@ function SequenceWords() {
   }, [index, words.length]);
 
   return (
-    <div className="relative text-center min-w-[300px]">
+    <div className="relative text-center w-full px-4">
        <AnimatePresence mode="wait">
           <motion.h2
             key={`word-${index}`}
@@ -112,7 +112,7 @@ function SequenceWords() {
             animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
             exit={{ y: -40, opacity: 0, filter: "blur(10px)" }}
             transition={{ duration: 0.4, ease: [0.33, 1, 0.68, 1] }}
-            className="text-4xl md:text-7xl font-black tracking-tighter uppercase absolute left-0 right-0 top-0 mx-auto text-white"
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter uppercase text-white whitespace-nowrap"
           >
              {words[index]}
           </motion.h2>
