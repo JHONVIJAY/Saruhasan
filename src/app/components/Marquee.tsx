@@ -6,7 +6,7 @@ export function Marquee() {
       <div className="flex whitespace-nowrap overflow-hidden select-none">
         <motion.div 
             animate={{ x: "-50%" }}
-            transition={{ duration: 30, ease: "linear", repeat: Infinity }}
+            transition={{ duration: 40, ease: "linear", repeat: Infinity }}
             className="flex w-fit"
         >
           {/* First Copy */}

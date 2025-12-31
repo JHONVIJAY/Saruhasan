@@ -54,18 +54,30 @@ export function AboutSpecs() {
                 text="Engineering digital perfection through rigorous design & code."
                 className="text-[7vw] md:text-[5vw] lg:text-[4vw] leading-[0.9] font-bold tracking-tighter mb-8 md:mb-12"
             />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12"
+            >
                 <p className="text-lg md:text-xl font-light text-white/70 leading-relaxed">
                     {resumeData.summary}
                 </p>
-            </div>
+            </motion.div>
         </div>
 
         {/* Specs Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/20 border border-white/20">
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/20 border border-white/20"
+        >
             
             {/* Education */}
-            <div className="bg-[#050505] p-8 md:p-12 hover:bg-[#0A0A0A] transition-colors">
+            <div className="bg-[#050505] p-8 md:p-12 hover:bg-[#0A0A0A] transition-colors duration-500">
                  <h3 className="font-mono text-xs uppercase tracking-widest text-white/50 mb-6 md:mb-8">Education</h3>
                  {resumeData.education.map((edu, i) => (
                      <div key={i} className="mb-6 md:mb-8 last:mb-0">
@@ -77,7 +89,7 @@ export function AboutSpecs() {
             </div>
 
             {/* Skills */}
-            <div className="bg-[#050505] p-8 md:p-12 hover:bg-[#0A0A0A] transition-colors">
+            <div className="bg-[#050505] p-8 md:p-12 hover:bg-[#0A0A0A] transition-colors duration-500">
                  <h3 className="font-mono text-xs uppercase tracking-widest text-white/50 mb-6 md:mb-8">Expertise</h3>
                  <ul className="flex flex-col gap-4">
                      {resumeData.skills.map((skill, i) => (
@@ -90,18 +102,18 @@ export function AboutSpecs() {
             </div>
 
             {/* Tools */}
-             <div className="bg-[#050505] p-8 md:p-12 hover:bg-[#0A0A0A] transition-colors">
+             <div className="bg-[#050505] p-8 md:p-12 hover:bg-[#0A0A0A] transition-colors duration-500">
                  <h3 className="font-mono text-xs uppercase tracking-widest text-white/50 mb-6 md:mb-8">Toolkit</h3>
                  <div className="flex flex-wrap gap-2">
                      {resumeData.tools.map((tool, i) => (
-                         <span key={i} className="px-3 md:px-4 py-1.5 md:py-2 border border-white/20 rounded-full text-xs md:text-sm font-mono hover:bg-white hover:text-black transition-colors cursor-default">
+                         <span key={i} className="px-3 md:px-4 py-1.5 md:py-2 border border-white/20 rounded-full text-xs md:text-sm font-mono hover:bg-white hover:text-black transition-all duration-300 cursor-default">
                              {tool}
                          </span>
                      ))}
                  </div>
             </div>
 
-        </div>
+        </motion.div>
 
       </div>
     </section>

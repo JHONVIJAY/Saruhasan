@@ -16,7 +16,7 @@ export function Preloader() {
     const timer = setTimeout(() => {
       setIsLoading(false);
       document.body.style.overflow = originalOverflow;
-    }, 2500); // 2.5s total loading time
+    }, 2200); // Reduced to 2.2s for snappier feel
     
     return () => {
       clearTimeout(timer);
@@ -33,7 +33,7 @@ export function Preloader() {
     },
     exit: {
       d: targetPath,
-      transition: { duration: 0.7, ease: [0.76, 0, 0.24, 1], delay: 0.3 }
+      transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1], delay: 0.2 }
     }
   };
 
@@ -46,7 +46,7 @@ export function Preloader() {
         <motion.div
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5, delay: 1 }}
+          transition={{ duration: 0.6, delay: 0.8, ease: [0.76, 0, 0.24, 1] }}
           className="fixed inset-0 z-[99999] flex items-center justify-center bg-[#050505]"
           style={{ cursor: 'wait' }}
         >
@@ -63,7 +63,7 @@ export function Preloader() {
            {/* Content */}
            <motion.div 
              className="relative z-20 flex flex-col items-center gap-4 text-white"
-             exit={{ opacity: 0, transition: { duration: 0.3 } }}
+             exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.4, ease: [0.76, 0, 0.24, 1] } }}
            >
               <div className="h-16 md:h-24 flex items-center justify-center relative w-full">
                 <SequenceWords />
@@ -72,13 +72,13 @@ export function Preloader() {
               <motion.div 
                 initial={{ width: 0 }}
                 animate={{ width: 200 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
+                transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}
                 className="h-[2px] bg-white/20 mt-4 overflow-hidden relative"
               >
                  <motion.div 
                    initial={{ x: "-100%" }}
                    animate={{ x: "100%" }}
-                   transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                   transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
                    className="w-full h-full bg-white"
                  />
               </motion.div>
@@ -98,7 +98,7 @@ function SequenceWords() {
     
     const timeout = setTimeout(() => {
       setIndex(index + 1);
-    }, 450); // Cycle through words every 450ms
+    }, 400); // Slightly faster cycling
     
     return () => clearTimeout(timeout);
   }, [index, words.length]);
@@ -108,10 +108,10 @@ function SequenceWords() {
        <AnimatePresence mode="wait">
           <motion.h2
             key={`word-${index}`}
-            initial={{ y: 40, opacity: 0, filter: "blur(10px)" }}
+            initial={{ y: 50, opacity: 0, filter: "blur(8px)" }}
             animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
-            exit={{ y: -40, opacity: 0, filter: "blur(10px)" }}
-            transition={{ duration: 0.4, ease: [0.33, 1, 0.68, 1] }}
+            exit={{ y: -50, opacity: 0, filter: "blur(8px)" }}
+            transition={{ duration: 0.5, ease: [0.33, 1, 0.68, 1] }}
             className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter uppercase text-white whitespace-nowrap"
           >
              {words[index]}

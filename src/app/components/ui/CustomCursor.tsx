@@ -6,7 +6,7 @@ export function CustomCursor() {
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
 
-  const springConfig = { damping: 25, stiffness: 700 };
+  const springConfig = { damping: 30, stiffness: 400, mass: 0.5 };
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
 
@@ -21,8 +21,7 @@ export function CustomCursor() {
       
       // Check if we should hide the default cursor
       if (target.closest("[data-cursor='hidden']")) {
-          setIsHovered(false); // Or add a separate hidden state
-          // We can use a separate state to hide it completely
+          setIsHovered(false);
           cursorX.set(-100); 
           cursorY.set(-100);
           return;
@@ -59,17 +58,18 @@ export function CustomCursor() {
       }}
     >
       <motion.div
-        initial={{ 
-          scale: 1, 
-          backgroundColor: "rgba(255, 255, 255, 0)", 
-          border: "2px solid rgba(255, 255, 255, 1)" 
-        }}
         animate={{
           scale: isHovered ? 2.5 : 1,
           backgroundColor: isHovered ? "rgba(255, 255, 255, 1)" : "rgba(255, 255, 255, 0)",
-          border: isHovered ? "0px solid rgba(255, 255, 255, 1)" : "2px solid rgba(255, 255, 255, 1)",
+          borderWidth: isHovered ? "0px" : "2px",
         }}
-        className="w-4 h-4 rounded-full"
+        transition={{
+          scale: { type: "spring", stiffness: 300, damping: 25 },
+          backgroundColor: { duration: 0.2 },
+          borderWidth: { duration: 0.2 },
+        }}
+        className="w-4 h-4 rounded-full border-white"
+        style={{ borderStyle: "solid", borderColor: "rgba(255, 255, 255, 1)" }}
       />
     </motion.div>
   );

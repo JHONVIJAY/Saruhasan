@@ -16,7 +16,7 @@ export function NavbarMix() {
 
     const timeout = setTimeout(() => {
       setDisplayText(currentName.slice(0, displayText.length + 1));
-    }, 60);
+    }, 50); // Faster typing
 
     return () => clearTimeout(timeout);
   }, [displayText, isTyping, currentName]);
@@ -39,7 +39,7 @@ export function NavbarMix() {
     if (displayText.length > 0) {
       const timeout = setTimeout(() => {
         setDisplayText(displayText.slice(0, -1));
-      }, 60);
+      }, 50); // Faster deleting
       return () => clearTimeout(timeout);
     } else {
       // Finished deleting, switch to the other name and start typing
@@ -55,7 +55,7 @@ export function NavbarMix() {
     <motion.nav 
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        transition={{ delay: 1, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ delay: 0.8, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
         className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center p-4 md:p-6 lg:p-8 mix-blend-difference text-white pointer-events-none"
     >
         <div className="pointer-events-auto min-w-[120px] md:min-w-[140px]">
@@ -78,8 +78,8 @@ export function NavbarMix() {
                                         exit: { opacity: 0 }
                                     }}
                                     transition={{
-                                        duration: 0.05,
-                                        delay: i * 0.05
+                                        duration: 0.03,
+                                        delay: i * 0.03
                                     }}
                                 >
                                     {char}
@@ -98,7 +98,7 @@ export function NavbarMix() {
                { name: 'Profile', href: '#profile' },
                { name: 'Contact', href: '#contact' }
              ].map((item, i) => (
-                 <a key={i} href={item.href} className="font-mono text-xs uppercase tracking-widest hover:underline underline-offset-4">
+                 <a key={i} href={item.href} className="font-mono text-xs uppercase tracking-widest hover:text-sky-400 transition-colors duration-300 underline-offset-4 hover:underline">
                      {item.name}
                  </a>
              ))}
@@ -107,7 +107,7 @@ export function NavbarMix() {
         <div className="pointer-events-auto md:hidden">
             <button 
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="relative z-[100]"
+                className="relative z-[100] transition-transform active:scale-95 duration-200"
                 aria-label="Toggle menu"
             >
                 {mobileMenuOpen ? (
@@ -126,7 +126,7 @@ export function NavbarMix() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className="fixed inset-0 z-[90] bg-[#050505] md:hidden overflow-hidden"
             onClick={() => setMobileMenuOpen(false)}
         >
@@ -152,12 +152,12 @@ export function NavbarMix() {
                     <motion.a 
                         key={i}
                         href={item.href}
-                        initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+                        initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
                         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                        exit={{ opacity: 0, y: -20, filter: "blur(10px)" }}
+                        exit={{ opacity: 0, y: -30, filter: "blur(10px)" }}
                         transition={{ 
-                            duration: 0.6, 
-                            delay: i * 0.1,
+                            duration: 0.5, 
+                            delay: i * 0.08,
                             ease: [0.16, 1, 0.3, 1]
                         }}
                         onClick={(e) => {
@@ -166,20 +166,20 @@ export function NavbarMix() {
                             setTimeout(() => {
                                 const element = document.getElementById(item.href.substring(1));
                                 element?.scrollIntoView({ behavior: 'smooth' });
-                            }, 400);
+                            }, 300);
                         }}
-                        className="group relative text-5xl font-black uppercase tracking-tighter text-white overflow-hidden"
+                        className="group relative text-5xl font-black uppercase tracking-tighter text-white overflow-hidden active:scale-95 transition-transform duration-200"
                     >
                         {/* Hover effect background */}
                         <motion.div 
                             className="absolute inset-0 bg-sky-400/10 -z-10 rounded-lg"
                             initial={{ scaleX: 0 }}
-                            whileHover={{ scaleX: 1 }}
-                            transition={{ duration: 0.3 }}
+                            whileTap={{ scaleX: 1 }}
+                            transition={{ duration: 0.2 }}
                             style={{ originX: 0 }}
                         />
                         
-                        <span className="relative inline-block group-hover:text-sky-400 transition-colors duration-300">
+                        <span className="relative inline-block group-active:text-sky-400 transition-colors duration-200">
                             {item.name}
                         </span>
                         
@@ -187,8 +187,8 @@ export function NavbarMix() {
                         <motion.div 
                             className="absolute bottom-0 left-0 h-[2px] bg-sky-400"
                             initial={{ scaleX: 0 }}
-                            whileHover={{ scaleX: 1 }}
-                            transition={{ duration: 0.3 }}
+                            whileTap={{ scaleX: 1 }}
+                            transition={{ duration: 0.2 }}
                             style={{ originX: 0 }}
                         />
                     </motion.a>
@@ -199,7 +199,7 @@ export function NavbarMix() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.6, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: 0.5, delay: 0.32, ease: [0.16, 1, 0.3, 1] }}
                     className="mt-8 text-center"
                 >
                     <div className="flex items-center justify-center gap-2 mb-4">
@@ -219,7 +219,7 @@ export function NavbarMix() {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -20 }}
-                                    transition={{ duration: 0.5 }}
+                                    transition={{ duration: 0.4 }}
                                     className="absolute inset-0 flex items-center justify-center"
                                 >
                                     <span className="font-black text-xl tracking-tighter uppercase text-white/40">SARUHASAN</span>
@@ -230,7 +230,7 @@ export function NavbarMix() {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -20 }}
-                                    transition={{ duration: 0.5 }}
+                                    transition={{ duration: 0.4 }}
                                     className="absolute inset-0 flex items-center justify-center"
                                 >
                                     <span className="font-black text-xl tracking-tighter uppercase text-white/40">JOHN</span>

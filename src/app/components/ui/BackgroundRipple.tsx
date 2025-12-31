@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface Cell {
   x: number;
@@ -24,8 +24,8 @@ export const BackgroundRipple = ({
 
     let animationFrameId: number;
     const cellSize = 60;
-    const rippleSpeed = 0.05;
-    const fadeSpeed = 0.02;
+    const rippleSpeed = 0.03;
+    const fadeSpeed = 0.015;
 
     // Set canvas size
     const resizeCanvas = () => {
@@ -58,25 +58,33 @@ export const BackgroundRipple = ({
       });
     };
 
-    // Spread ripple to neighbors
+    // Spread ripple to neighbors with distance-based intensity
     const spreadRipple = (cellX: number, cellY: number, intensity: number) => {
-      if (intensity < 0.1) return;
+      if (intensity < 0.05) return;
 
+      // Extended neighbor range for smoother spread
       const neighbors = [
-        [cellX - 1, cellY],
-        [cellX + 1, cellY],
-        [cellX, cellY - 1],
-        [cellX, cellY + 1],
-        [cellX - 1, cellY - 1],
-        [cellX + 1, cellY - 1],
-        [cellX - 1, cellY + 1],
-        [cellX + 1, cellY + 1],
+        // Immediate neighbors (distance 1)
+        [cellX - 1, cellY, 0.75],
+        [cellX + 1, cellY, 0.75],
+        [cellX, cellY - 1, 0.75],
+        [cellX, cellY + 1, 0.75],
+        // Diagonal neighbors (distance ~1.4)
+        [cellX - 1, cellY - 1, 0.65],
+        [cellX + 1, cellY - 1, 0.65],
+        [cellX - 1, cellY + 1, 0.65],
+        [cellX + 1, cellY + 1, 0.65],
+        // Extended neighbors (distance 2)
+        [cellX - 2, cellY, 0.5],
+        [cellX + 2, cellY, 0.5],
+        [cellX, cellY - 2, 0.5],
+        [cellX, cellY + 2, 0.5],
       ];
 
-      neighbors.forEach(([nx, ny]) => {
+      neighbors.forEach(([nx, ny, falloff]) => {
         const key = getCellKey(nx, ny);
         const existingCell = cellsRef.current.get(key);
-        const newIntensity = intensity * 0.6;
+        const newIntensity = intensity * (falloff as number);
 
         if (!existingCell || existingCell.intensity < newIntensity) {
           cellsRef.current.set(key, {
@@ -105,7 +113,7 @@ export const BackgroundRipple = ({
       }
 
       const cell = getCellFromPosition(posX, posY);
-      createRipple(cell.x, cell.y, 1.5);
+      createRipple(cell.x, cell.y, 1.8);
     };
 
     canvas.addEventListener("touchstart", handleInteraction);
@@ -144,8 +152,8 @@ export const BackgroundRipple = ({
       cellsRef.current.forEach((cell, key) => {
         cell.rippleTime += rippleSpeed;
 
-        // Spread ripple to neighbors at specific time
-        if (cell.rippleTime > 0.15 && cell.rippleTime < 0.2) {
+        // Spread ripple to neighbors at specific time intervals
+        if (cell.rippleTime > 0.08 && cell.rippleTime < 0.12) {
           cellsToSpread.push({ x: cell.x, y: cell.y, intensity: cell.intensity });
         }
 
@@ -161,14 +169,21 @@ export const BackgroundRipple = ({
         const x = cell.x * cellSize;
         const y = cell.y * cellSize;
 
-        // Glow effect
-        ctx.fillStyle = `rgba(56, 189, 248, ${cell.intensity * 0.15})`;
+        // Enhanced glow effect with easing
+        const easedIntensity = 1 - Math.pow(1 - Math.min(cell.intensity, 1), 2);
+        
+        // Inner glow
+        ctx.fillStyle = `rgba(56, 189, 248, ${easedIntensity * 0.2})`;
         ctx.fillRect(x, y, cellSize, cellSize);
 
-        // Border highlight
-        ctx.strokeStyle = `rgba(56, 189, 248, ${cell.intensity * 0.5})`;
-        ctx.lineWidth = 2;
-        ctx.strokeRect(x, y, cellSize, cellSize);
+        // Border highlight with gradient
+        ctx.strokeStyle = `rgba(56, 189, 248, ${easedIntensity * 0.6})`;
+        ctx.lineWidth = 3;
+        ctx.strokeRect(x + 1, y + 1, cellSize - 2, cellSize - 2);
+
+        // Outer subtle glow
+        ctx.fillStyle = `rgba(56, 189, 248, ${easedIntensity * 0.1})`;
+        ctx.fillRect(x - cellSize * 0.1, y - cellSize * 0.1, cellSize * 1.2, cellSize * 1.2);
       });
 
       // Remove faded cells

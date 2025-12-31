@@ -70,12 +70,12 @@ export function ExperienceEditorial() {
                           
                           {/* Left Column - Company & Role */}
                           <div className="flex gap-4 md:gap-6">
-                              <span className="font-mono text-4xl md:text-5xl lg:text-6xl font-black text-white/10 md:text-white/5 md:group-hover:text-white/10 transition-colors duration-500 leading-none">
+                              <span className="font-mono text-4xl md:text-5xl lg:text-6xl font-black text-white/10 md:text-white/5 md:group-hover:text-white/10 transition-colors duration-700 leading-none">
                                 0{index + 1}
                               </span>
                               <div className="flex-1">
                                   <div className="flex items-start gap-3 mb-2">
-                                      <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-sky-400/90 md:text-white md:group-hover:text-sky-400 transition-colors duration-300">
+                                      <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-sky-400/90 md:text-white md:group-hover:text-sky-400 transition-colors duration-500">
                                           {job.company}
                                       </h3>
                                       {job.link && (
@@ -83,7 +83,7 @@ export function ExperienceEditorial() {
                                           href={job.link} 
                                           target="_blank"
                                           rel="noopener noreferrer"
-                                          className="text-white/50 md:text-white/40 hover:text-sky-400 active:text-sky-400 transition-colors mt-1"
+                                          className="text-white/50 md:text-white/40 hover:text-sky-400 active:text-sky-400 transition-colors duration-300 mt-1"
                                         >
                                           <ArrowUpRight className="w-4 h-4 md:w-5 md:h-5" />
                                         </a>
@@ -97,15 +97,15 @@ export function ExperienceEditorial() {
 
                           {/* Right Column - Description & Meta */}
                           <div className="flex flex-col justify-between gap-6">
-                              <p className="text-base md:text-lg leading-relaxed font-light text-white/90 md:text-white/70 md:group-hover:text-white/90 transition-colors duration-300">
+                              <p className="text-base md:text-lg leading-relaxed font-light text-white/90 md:text-white/70 md:group-hover:text-white/90 transition-colors duration-500">
                                   {job.description}
                               </p>
                               <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 border-t border-white/10 pt-4">
-                                  <span className="font-mono text-xs uppercase tracking-widest text-white/50 md:text-white/40 md:group-hover:text-white/60 transition-colors">
+                                  <span className="font-mono text-xs uppercase tracking-widest text-white/50 md:text-white/40 md:group-hover:text-white/60 transition-colors duration-500">
                                     {job.period}
                                   </span>
-                                  <span className="hidden sm:block w-12 h-[1px] bg-white/30 md:bg-white/20 md:group-hover:bg-white/40 transition-colors" />
-                                  <span className="font-mono text-xs uppercase tracking-widest text-white/50 md:text-white/40 md:group-hover:text-white/60 transition-colors">
+                                  <span className="hidden sm:block w-12 h-[1px] bg-white/30 md:bg-white/20 md:group-hover:bg-white/40 transition-colors duration-500" />
+                                  <span className="font-mono text-xs uppercase tracking-widest text-white/50 md:text-white/40 md:group-hover:text-white/60 transition-colors duration-500">
                                     {job.location}
                                   </span>
                               </div>
@@ -114,7 +114,7 @@ export function ExperienceEditorial() {
                         </div>
 
                         {/* Decorative Line - Desktop only */}
-                        <div className="hidden md:block absolute bottom-0 left-0 h-px w-0 group-hover:w-full bg-gradient-to-r from-sky-400/0 via-sky-400/30 to-sky-400/0 transition-all duration-1000 ease-out" />
+                        <div className="hidden md:block absolute bottom-0 left-0 h-px w-0 group-hover:w-full bg-gradient-to-r from-sky-400/0 via-sky-400/30 to-sky-400/0 transition-all duration-1500 ease-out" />
 
                     </motion.div>
                 ))}

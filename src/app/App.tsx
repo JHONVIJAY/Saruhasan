@@ -12,14 +12,15 @@ import { ReactLenis } from "lenis/react";
 
 export default function App() {
   const lenisOptions = {
-    duration: 1.2,
+    duration: 1.5,
     easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    direction: 'vertical',
-    gestureDirection: 'vertical',
+    direction: 'vertical' as const,
+    gestureDirection: 'vertical' as const,
     smooth: true,
     mouseMultiplier: 1,
     smoothTouch: false,
     touchMultiplier: 2,
+    infinite: false,
   };
 
   return (
