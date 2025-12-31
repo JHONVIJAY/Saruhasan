@@ -47,7 +47,7 @@ export const resumeData = {
     {
       title: "Ava Surfaces",
       period: "2025",
-      description: "A high-performance frontend application demonstrating advanced UI patterns and state management. The flagship representation of my 'John' persona—minimalist, fluid, and precise.",
+      description: "A premium tile showroom landing page featuring sophisticated animations and immersive visual storytelling. Designed to showcase luxury surfaces with elegance and precision.",
       tech: ["React", "Vite", "Tailwind", "Framer Motion"],
       link: "https://ava-frontend-umber.vercel.app/"
     },
@@ -66,17 +66,10 @@ export const resumeData = {
       link: "#"
     },
     {
-      title: "Cromapages CMS",
+      title: "Cromapages",
       period: "2024",
       description: "A headless CMS interface designed for flexibility. Focused on seamless content operations across mobile and desktop devices.",
       tech: ["Next.js", "TypeScript", "Figma"],
-      link: "#"
-    },
-    {
-      title: "Taxima",
-      period: "2024",
-      description: "Taxi booking service with real-time mapping. Solved complex logistical UI challenges to create a smooth booking experience.",
-      tech: ["React", "Maps API", "UI Design"],
       link: "#"
     }
   ],
