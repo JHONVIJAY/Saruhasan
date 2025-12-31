@@ -46,7 +46,7 @@ export function HeroSolid() {
   return (
     <section 
       id="index" 
-      className="relative w-full min-h-screen bg-[#050505] flex flex-col items-center pt-24 md:pt-32 pb-12 px-4 md:px-8 overflow-x-hidden"
+      className="relative w-full min-h-screen bg-[#050505] flex flex-col items-center pt-24 md:pt-32 pb-12 px-4 md:px-8 overflow-x-hidden overflow-y-hidden"
     >
       
       {/* BACKGROUND RIPPLE EFFECT - MOBILE ONLY */}
@@ -81,10 +81,10 @@ export function HeroSolid() {
       </div>
 
       {/* IMAGE CONTAINER */}
-      <div className="relative w-full max-w-[1400px] h-[40vh] md:h-[65vh] overflow-hidden bg-[#111] pointer-events-none">
+      <div className="relative w-full max-w-[1400px] h-[40vh] md:h-[65vh] overflow-hidden bg-[#050505] pointer-events-none">
           <motion.div 
-            style={{ y, opacity }} 
-            className="w-full h-full"
+            style={{ y: useTransform(scrollY, [0, 1000], [0, 200]), opacity }} 
+            className="w-full h-full min-h-[150%]"
           >
              <motion.img 
                 initial={{ scale: 1.2, opacity: 0 }}

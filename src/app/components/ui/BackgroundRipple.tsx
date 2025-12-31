@@ -26,15 +26,54 @@ export const BackgroundRipple = ({
     const cellSize = 60;
     const rippleSpeed = 0.03;
     const fadeSpeed = 0.015;
+    let contentElements: Array<{ rect: DOMRect; element: Element }> = [];
 
     // Set canvas size
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      updateContentElements(); // Update on resize
+    };
+
+    // Cache all content elements and their bounding boxes
+    const updateContentElements = () => {
+      contentElements = [];
+      
+      // Find all text and image elements in the hero section
+      const heroSection = canvas.closest('section');
+      if (!heroSection) return;
+      
+      // Get all text elements
+      const textElements = heroSection.querySelectorAll('h1, h2, h3, p, span, label, div');
+      textElements.forEach(el => {
+        // Only include if it has actual text content
+        if (el.textContent && el.textContent.trim().length > 0) {
+          const rect = el.getBoundingClientRect();
+          // Only include if it has actual size
+          if (rect.width > 0 && rect.height > 0) {
+            contentElements.push({ rect, element: el });
+          }
+        }
+      });
+      
+      // Get all images
+      const images = heroSection.querySelectorAll('img');
+      images.forEach(img => {
+        const rect = img.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          contentElements.push({ rect, element: img });
+        }
+      });
     };
 
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
+    
+    // Update content elements periodically (in case of dynamic changes)
+    const updateInterval = setInterval(updateContentElements, 1000);
+    
+    // Initial update after a short delay to ensure DOM is ready
+    setTimeout(updateContentElements, 500);
 
     // Get cell key
     const getCellKey = (x: number, y: number) => `${x},${y}`;
@@ -47,49 +86,32 @@ export const BackgroundRipple = ({
       };
     };
 
-    // Check if a cell area overlaps with text or images
+    // Check if a cell area overlaps with text or images using cached bounding boxes
     const isCellOverContent = (cellX: number, cellY: number): boolean => {
-      const x = cellX * cellSize;
-      const y = cellY * cellSize;
+      const canvasRect = canvas.getBoundingClientRect();
+      const cellScreenX = canvasRect.left + (cellX * cellSize);
+      const cellScreenY = canvasRect.top + (cellY * cellSize);
+      const cellScreenRight = cellScreenX + cellSize;
+      const cellScreenBottom = cellScreenY + cellSize;
       
-      // Check center and corners of the cell
-      const checkPoints = [
-        [x + cellSize / 2, y + cellSize / 2], // Center
-        [x + 5, y + 5], // Top-left
-        [x + cellSize - 5, y + 5], // Top-right
-        [x + 5, y + cellSize - 5], // Bottom-left
-        [x + cellSize - 5, y + cellSize - 5], // Bottom-right
-      ];
-      
-      for (const [pointX, pointY] of checkPoints) {
-        const elements = document.elementsFromPoint(pointX, pointY);
+      // Check if cell overlaps with any content element
+      for (const { rect, element } of contentElements) {
+        // Check if rectangles overlap
+        const overlaps = !(
+          cellScreenRight < rect.left ||
+          cellScreenX > rect.right ||
+          cellScreenBottom < rect.top ||
+          cellScreenY > rect.bottom
+        );
         
-        for (const element of elements) {
-          // Skip canvas and structural elements
-          if (element === canvas || element.tagName === 'CANVAS') continue;
-          
-          // Check for text content elements
-          if (element.tagName === 'H1' || element.tagName === 'H2' || 
-              element.tagName === 'P' || element.tagName === 'SPAN' ||
-              element.tagName === 'LABEL') {
-            // Check if it actually has visible text
-            const hasVisibleText = element.textContent && element.textContent.trim().length > 0;
-            const computedStyle = window.getComputedStyle(element);
-            const isVisible = computedStyle.opacity !== '0' && computedStyle.visibility !== 'hidden';
-            
-            if (hasVisibleText && isVisible) {
-              return true;
-            }
-          }
-          
-          // Check for images
-          if (element.tagName === 'IMG') {
-            return true;
-          }
-          
-          // Check for elements with background images
+        if (overlaps) {
+          // Additional check for visibility
           const computedStyle = window.getComputedStyle(element);
-          if (computedStyle.backgroundImage && computedStyle.backgroundImage !== 'none') {
+          const isVisible = computedStyle.opacity !== '0' && 
+                           computedStyle.visibility !== 'hidden' &&
+                           computedStyle.display !== 'none';
+          
+          if (isVisible) {
             return true;
           }
         }
@@ -251,6 +273,7 @@ export const BackgroundRipple = ({
       canvas.removeEventListener("touchstart", handleInteraction);
       canvas.removeEventListener("click", handleInteraction);
       cancelAnimationFrame(animationFrameId);
+      clearInterval(updateInterval);
     };
   }, []);
 
