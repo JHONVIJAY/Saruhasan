@@ -22,7 +22,7 @@ export function Navbar() {
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 1, delay: 1 }}
-        className="fixed top-0 left-0 right-0 z-[60] px-4 md:px-6 py-4 md:py-6 flex justify-between items-start"
+        className="fixed top-0 left-0 right-0 z-50 px-4 md:px-6 py-4 md:py-6 flex justify-between items-start"
     >
         <div>
             <div className="flex flex-col">
@@ -40,8 +40,11 @@ export function Navbar() {
 
         {/* Mobile Menu Button */}
         <button 
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden text-white p-2 -mr-2 relative z-[70]"
+            onClick={(e) => {
+                e.stopPropagation();
+                setMobileMenuOpen(!mobileMenuOpen);
+            }}
+            className="md:hidden text-white p-2 -mr-2 relative z-[100] bg-[#050505]/50 rounded-md touch-manipulation"
             aria-label="Toggle menu"
         >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -68,10 +71,9 @@ export function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-50 bg-[#050505]/98 backdrop-blur-lg md:hidden"
-            onClick={() => setMobileMenuOpen(false)}
+            className="fixed inset-0 z-[90] bg-[#050505]/98 backdrop-blur-lg md:hidden"
         >
-            <div className="flex flex-col items-center justify-center h-full gap-8 px-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex flex-col items-center justify-center h-full gap-8 px-4 pt-20">
                 <a 
                     href="#works" 
                     onClick={(e) => {
