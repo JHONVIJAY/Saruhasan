@@ -51,24 +51,28 @@ export const BackgroundRipple = ({
     const isOverExcludedElement = (clientX: number, clientY: number): boolean => {
       const elements = document.elementsFromPoint(clientX, clientY);
       
-      // Check if clicking on text, images, or other content
+      // Check if clicking directly on text, images, or interactive content
       for (const element of elements) {
-        // Skip if it's the canvas itself
-        if (element === canvas) continue;
+        // Skip if it's the canvas itself or section/body/html
+        if (element === canvas || element.tagName === 'SECTION' || element.tagName === 'BODY' || element.tagName === 'HTML') continue;
         
-        // Check if element has text content
-        const hasText = element.textContent && element.textContent.trim().length > 0;
-        
-        // Check if element is an image
+        // Only block if clicking directly on these specific elements
         const isImage = element.tagName === 'IMG';
+        const isButton = element.tagName === 'BUTTON' || element.tagName === 'A';
+        const isTextElement = element.tagName === 'H1' || element.tagName === 'H2' || element.tagName === 'P' || element.tagName === 'SPAN' || element.tagName === 'DIV';
         
-        // Check if element has pointer-events enabled (interactive content)
-        const computedStyle = window.getComputedStyle(element);
-        const hasPointerEvents = computedStyle.pointerEvents !== 'none';
-        
-        // If it has text or is an image and has size, exclude it
-        if ((hasText || isImage) && hasPointerEvents) {
+        // Check if it's a direct text or image element with actual content
+        if (isImage || isButton) {
           return true;
+        }
+        
+        // For text elements, only block if they're relatively small (direct text, not containers)
+        if (isTextElement) {
+          const rect = element.getBoundingClientRect();
+          const isSmallElement = rect.width < window.innerWidth * 0.8; // Not a full-width container
+          if (isSmallElement) {
+            return true;
+          }
         }
       }
       
