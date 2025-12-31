@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import heroImg from "../../assets/0575f999a9ea5865df7e385148b08517b640dc26.png";
 import { ArrowDown } from "lucide-react";
 import { BackgroundRipple } from "./ui/BackgroundRipple";
+import { useState } from "react";
 
 const textVariants = {
   hidden: { opacity: 0, y: 100 },
@@ -42,12 +43,64 @@ export function HeroSolid() {
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 1000], [0, 400]);
   const opacity = useTransform(scrollY, [0, 500], [1, 0]);
+  const [angelPositions, setAngelPositions] = useState<Array<{ x: number; y: number; id: number }>>([]);
+
+  const handleRippleTap = (e: React.TouchEvent | React.MouseEvent) => {
+    // Only work on mobile where ripple effect is visible
+    if (window.innerWidth >= 768) return;
+    
+    const target = e.target as HTMLElement;
+    
+    // Check if tapping on empty space (canvas element)
+    if (target.tagName !== 'CANVAS') return;
+    
+    const rect = target.getBoundingClientRect();
+    const x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
+    const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+    
+    const newAngel = { x, y, id: Date.now() };
+    setAngelPositions(prev => [...prev, newAngel]);
+    
+    // Remove after animation completes
+    setTimeout(() => {
+      setAngelPositions(prev => prev.filter(a => a.id !== newAngel.id));
+    }, 3000);
+  };
 
   return (
-    <section id="index" className="relative w-full min-h-screen bg-[#050505] flex flex-col items-center pt-24 md:pt-32 pb-12 px-4 md:px-8 overflow-x-hidden">
+    <section 
+      id="index" 
+      className="relative w-full min-h-screen bg-[#050505] flex flex-col items-center pt-24 md:pt-32 pb-12 px-4 md:px-8 overflow-x-hidden"
+      onTouchStart={handleRippleTap}
+      onClick={handleRippleTap}
+    >
       
       {/* BACKGROUND RIPPLE EFFECT - MOBILE ONLY */}
       <BackgroundRipple className="absolute inset-0 z-0 md:hidden" />
+      
+      {/* HIDDEN ANGEL TEXTS - MOBILE ONLY */}
+      {angelPositions.map((pos) => (
+        <motion.div
+          key={pos.id}
+          initial={{ opacity: 0, scale: 0.8, filter: "blur(8px)" }}
+          animate={{ 
+            opacity: [0, 0.4, 0.3, 0], 
+            scale: [0.8, 1.1, 1, 1],
+            filter: ["blur(8px)", "blur(2px)", "blur(3px)", "blur(6px)"]
+          }}
+          transition={{ duration: 3, ease: [0.22, 1, 0.36, 1] }}
+          className="absolute pointer-events-none z-[5] md:hidden select-none"
+          style={{
+            left: pos.x,
+            top: pos.y,
+            transform: 'translate(-50%, -50%)',
+          }}
+        >
+          <span className="text-5xl md:text-6xl font-black tracking-tighter text-sky-400/60 uppercase">
+            ANGEL
+          </span>
+        </motion.div>
+      ))}
       
       {/* TOP TEXT */}
       <div className="w-full max-w-[1800px] flex flex-col md:flex-row justify-between items-start md:items-end relative z-10 mb-8 md:mb-12 overflow-visible pointer-events-none">

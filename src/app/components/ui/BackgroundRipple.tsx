@@ -9,8 +9,10 @@ interface Cell {
 
 export const BackgroundRipple = ({
   className,
+  excludeElements,
 }: {
   className?: string;
+  excludeElements?: string; // CSS selector for elements to exclude
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const cellsRef = useRef<Map<string, Cell>>(new Map());
@@ -45,6 +47,34 @@ export const BackgroundRipple = ({
         x: Math.floor(posX / cellSize),
         y: Math.floor(posY / cellSize),
       };
+    };
+
+    // Check if position is over excluded elements (text, images)
+    const isOverExcludedElement = (clientX: number, clientY: number): boolean => {
+      const elements = document.elementsFromPoint(clientX, clientY);
+      
+      // Check if clicking on text, images, or other content
+      for (const element of elements) {
+        // Skip if it's the canvas itself
+        if (element === canvas) continue;
+        
+        // Check if element has text content
+        const hasText = element.textContent && element.textContent.trim().length > 0;
+        
+        // Check if element is an image
+        const isImage = element.tagName === 'IMG';
+        
+        // Check if element has pointer-events enabled (interactive content)
+        const computedStyle = window.getComputedStyle(element);
+        const hasPointerEvents = computedStyle.pointerEvents !== 'none';
+        
+        // If it has text or is an image and has size, exclude it
+        if ((hasText || isImage) && hasPointerEvents) {
+          return true;
+        }
+      }
+      
+      return false;
     };
 
     // Create ripple at cell
@@ -101,19 +131,29 @@ export const BackgroundRipple = ({
     const handleInteraction = (e: TouchEvent | MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
       let posX: number, posY: number;
+      let clientX: number, clientY: number;
 
       if ('touches' in e) {
         // Touch event
-        posX = e.touches[0].clientX - rect.left;
-        posY = e.touches[0].clientY - rect.top;
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+        posX = clientX - rect.left;
+        posY = clientY - rect.top;
       } else {
         // Mouse event
-        posX = e.clientX - rect.left;
-        posY = e.clientY - rect.top;
+        clientX = e.clientX;
+        clientY = e.clientY;
+        posX = clientX - rect.left;
+        posY = clientY - rect.top;
+      }
+
+      // Only create ripple if not over text or images
+      if (isOverExcludedElement(clientX, clientY)) {
+        return;
       }
 
       const cell = getCellFromPosition(posX, posY);
-      createRipple(cell.x, cell.y, 1.8);
+      createRipple(cell.x, cell.y, 1.2); // Reduced initial intensity
     };
 
     canvas.addEventListener("touchstart", handleInteraction);
@@ -125,8 +165,8 @@ export const BackgroundRipple = ({
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw grid
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.03)";
+      // Draw grid - much more subtle
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.015)"; // Reduced from 0.03
       ctx.lineWidth = 1;
 
       // Vertical lines
@@ -169,20 +209,20 @@ export const BackgroundRipple = ({
         const x = cell.x * cellSize;
         const y = cell.y * cellSize;
 
-        // Enhanced glow effect with easing
+        // Enhanced glow effect with easing - REDUCED BRIGHTNESS
         const easedIntensity = 1 - Math.pow(1 - Math.min(cell.intensity, 1), 2);
         
-        // Inner glow
-        ctx.fillStyle = `rgba(56, 189, 248, ${easedIntensity * 0.2})`;
+        // Inner glow - much more subtle
+        ctx.fillStyle = `rgba(56, 189, 248, ${easedIntensity * 0.08})`; // Reduced from 0.2
         ctx.fillRect(x, y, cellSize, cellSize);
 
-        // Border highlight with gradient
-        ctx.strokeStyle = `rgba(56, 189, 248, ${easedIntensity * 0.6})`;
-        ctx.lineWidth = 3;
+        // Border highlight - more subtle
+        ctx.strokeStyle = `rgba(56, 189, 248, ${easedIntensity * 0.25})`; // Reduced from 0.6
+        ctx.lineWidth = 2; // Reduced from 3
         ctx.strokeRect(x + 1, y + 1, cellSize - 2, cellSize - 2);
 
-        // Outer subtle glow
-        ctx.fillStyle = `rgba(56, 189, 248, ${easedIntensity * 0.1})`;
+        // Outer subtle glow - very dim
+        ctx.fillStyle = `rgba(56, 189, 248, ${easedIntensity * 0.04})`; // Reduced from 0.1
         ctx.fillRect(x - cellSize * 0.1, y - cellSize * 0.1, cellSize * 1.2, cellSize * 1.2);
       });
 
@@ -203,12 +243,13 @@ export const BackgroundRipple = ({
       canvas.removeEventListener("click", handleInteraction);
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [excludeElements]);
 
   return (
     <canvas
       ref={canvasRef}
       className={`pointer-events-auto ${className}`}
+      style={{ mixBlendMode: 'screen' }} // Helps blend better with background
     />
   );
 };
