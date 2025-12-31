@@ -9,10 +9,8 @@ interface Cell {
 
 export const BackgroundRipple = ({
   className,
-  excludeElements,
 }: {
   className?: string;
-  excludeElements?: string; // CSS selector for elements to exclude
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const cellsRef = useRef<Map<string, Cell>>(new Map());
@@ -153,7 +151,7 @@ export const BackgroundRipple = ({
       }
 
       const cell = getCellFromPosition(posX, posY);
-      createRipple(cell.x, cell.y, 1.2); // Reduced initial intensity
+      createRipple(cell.x, cell.y, 1.2);
     };
 
     canvas.addEventListener("touchstart", handleInteraction);
@@ -165,8 +163,8 @@ export const BackgroundRipple = ({
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw grid - much more subtle
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.015)"; // Reduced from 0.03
+      // Draw grid - subtle like reference image
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.02)";
       ctx.lineWidth = 1;
 
       // Vertical lines
@@ -205,25 +203,20 @@ export const BackgroundRipple = ({
           return;
         }
 
-        // Draw cell
+        // Draw cell - simple and clean like reference
         const x = cell.x * cellSize;
         const y = cell.y * cellSize;
 
-        // Enhanced glow effect with easing - REDUCED BRIGHTNESS
         const easedIntensity = 1 - Math.pow(1 - Math.min(cell.intensity, 1), 2);
         
-        // Inner glow - much more subtle
-        ctx.fillStyle = `rgba(56, 189, 248, ${easedIntensity * 0.08})`; // Reduced from 0.2
+        // Simple fill - subtle glow
+        ctx.fillStyle = `rgba(56, 189, 248, ${easedIntensity * 0.15})`;
         ctx.fillRect(x, y, cellSize, cellSize);
 
-        // Border highlight - more subtle
-        ctx.strokeStyle = `rgba(56, 189, 248, ${easedIntensity * 0.25})`; // Reduced from 0.6
-        ctx.lineWidth = 2; // Reduced from 3
-        ctx.strokeRect(x + 1, y + 1, cellSize - 2, cellSize - 2);
-
-        // Outer subtle glow - very dim
-        ctx.fillStyle = `rgba(56, 189, 248, ${easedIntensity * 0.04})`; // Reduced from 0.1
-        ctx.fillRect(x - cellSize * 0.1, y - cellSize * 0.1, cellSize * 1.2, cellSize * 1.2);
+        // Border only
+        ctx.strokeStyle = `rgba(56, 189, 248, ${easedIntensity * 0.4})`;
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(x, y, cellSize, cellSize);
       });
 
       // Remove faded cells
@@ -243,13 +236,12 @@ export const BackgroundRipple = ({
       canvas.removeEventListener("click", handleInteraction);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [excludeElements]);
+  }, []);
 
   return (
     <canvas
       ref={canvasRef}
       className={`pointer-events-auto ${className}`}
-      style={{ mixBlendMode: 'screen' }} // Helps blend better with background
     />
   );
 };
