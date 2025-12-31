@@ -5,13 +5,50 @@ import { Menu, X } from "lucide-react";
 export function NavbarMix() {
   const [showAlias, setShowAlias] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [displayText, setDisplayText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isTyping, setIsTyping] = useState(true);
+  const [currentName, setCurrentName] = useState("SARUHASAN");
 
+  // Initial typing effect on page load
   useEffect(() => {
-    const interval = setInterval(() => {
-      setShowAlias((prev) => !prev);
-    }, 4000); // Cycles every 4 seconds
-    return () => clearInterval(interval);
-  }, []);
+    if (!isTyping || displayText.length === currentName.length) return;
+
+    const timeout = setTimeout(() => {
+      setDisplayText(currentName.slice(0, displayText.length + 1));
+    }, 60);
+
+    return () => clearTimeout(timeout);
+  }, [displayText, isTyping, currentName]);
+
+  // Wait 5 seconds after typing completes, then start deleting
+  useEffect(() => {
+    if (isTyping && displayText.length === currentName.length) {
+      const timeout = setTimeout(() => {
+        setIsTyping(false);
+        setIsDeleting(true);
+      }, 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [isTyping, displayText, currentName]);
+
+  // Deleting animation
+  useEffect(() => {
+    if (!isDeleting) return;
+
+    if (displayText.length > 0) {
+      const timeout = setTimeout(() => {
+        setDisplayText(displayText.slice(0, -1));
+      }, 60);
+      return () => clearTimeout(timeout);
+    } else {
+      // Finished deleting, switch to the other name and start typing
+      setIsDeleting(false);
+      setIsTyping(true);
+      setCurrentName(currentName === "SARUHASAN" ? "JOHN" : "SARUHASAN");
+      setShowAlias(!showAlias);
+    }
+  }, [displayText, isDeleting, currentName, showAlias]);
 
   return (
     <>
@@ -19,34 +56,37 @@ export function NavbarMix() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ delay: 1, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed top-0 left-0 right-0 z-50 flex justify-between items-start p-4 md:p-6 lg:p-8 mix-blend-difference text-white pointer-events-none"
+        className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center p-4 md:p-6 lg:p-8 mix-blend-difference text-white pointer-events-none"
     >
         <div className="pointer-events-auto min-w-[120px] md:min-w-[140px]">
-             <a href="#index" className="block relative h-8 md:h-8 overflow-hidden">
+             <a href="#index" className="block relative h-6 md:h-8 overflow-hidden">
                 <AnimatePresence mode="wait">
-                    {!showAlias ? (
-                        <motion.div
-                            key="full"
-                            initial={{ opacity: 0, filter: "blur(8px)", scale: 0.95 }}
-                            animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
-                            exit={{ opacity: 0, filter: "blur(8px)", scale: 1.05 }}
-                            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                            className="absolute top-0 left-0 origin-left"
-                        >
-                            <span className="font-black text-lg md:text-xl tracking-tighter uppercase leading-none whitespace-nowrap">SARUHASAN</span>
-                        </motion.div>
-                    ) : (
-                        <motion.div
-                            key="alias"
-                            initial={{ opacity: 0, filter: "blur(8px)", scale: 0.95 }}
-                            animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
-                            exit={{ opacity: 0, filter: "blur(8px)", scale: 1.05 }}
-                            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                            className="absolute top-0 left-0 origin-left"
-                        >
-                            <span className="font-black text-lg md:text-xl tracking-tighter uppercase leading-none whitespace-nowrap">JOHN</span>
-                        </motion.div>
-                    )}
+                    <motion.div
+                        key="full"
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        className="absolute top-0 left-0 origin-left"
+                    >
+                        <span className="font-black text-lg md:text-xl tracking-tighter uppercase leading-none whitespace-nowrap">
+                            {displayText.split("").map((char, i) => (
+                                <motion.span
+                                    key={i}
+                                    variants={{
+                                        hidden: { opacity: 0 },
+                                        visible: { opacity: 1 },
+                                        exit: { opacity: 0 }
+                                    }}
+                                    transition={{
+                                        duration: 0.05,
+                                        delay: i * 0.05
+                                    }}
+                                >
+                                    {char}
+                                </motion.span>
+                            ))}
+                        </span>
+                    </motion.div>
                 </AnimatePresence>
              </a>
         </div>
@@ -64,17 +104,19 @@ export function NavbarMix() {
              ))}
         </div>
 
-        <button 
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="pointer-events-auto md:hidden relative z-[100] p-2 -mr-2"
-            aria-label="Toggle menu"
-        >
-            {mobileMenuOpen ? (
-                <X className="w-6 h-6" />
-            ) : (
-                <span className="font-mono text-xs uppercase tracking-widest">Menu</span>
-            )}
-        </button>
+        <div className="pointer-events-auto md:hidden">
+            <button 
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="relative z-[100]"
+                aria-label="Toggle menu"
+            >
+                {mobileMenuOpen ? (
+                    <X className="w-6 h-6" />
+                ) : (
+                    <span className="font-mono text-xs uppercase tracking-widest">Menu</span>
+                )}
+            </button>
+        </div>
     </motion.nav>
 
     {/* Mobile Menu Overlay */}

@@ -1,6 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import heroImg from "../../assets/0575f999a9ea5865df7e385148b08517b640dc26.png";
 import { ArrowDown } from "lucide-react";
+import { BackgroundRipple } from "./ui/BackgroundRipple";
 
 const textVariants = {
   hidden: { opacity: 0, y: 100 },
@@ -45,10 +46,9 @@ export function HeroSolid() {
   return (
     <section id="index" className="relative w-full min-h-screen bg-[#050505] flex flex-col items-center pt-24 md:pt-32 pb-12 px-4 md:px-8 overflow-x-hidden">
       
-      {/* BACKGROUND ACCENTS */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-full bg-white/5 z-0" />
-      <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white/5 z-0" />
-
+      {/* BACKGROUND RIPPLE EFFECT - MOBILE ONLY */}
+      <BackgroundRipple className="absolute inset-0 z-0 md:hidden" />
+      
       {/* TOP TEXT */}
       <div className="w-full max-w-[1800px] flex flex-col md:flex-row justify-between items-start md:items-end relative z-10 mb-8 md:mb-12 overflow-visible">
           <div className="flex flex-col overflow-visible">
