@@ -1,22 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 
-interface Ripple {
+interface Cell {
   x: number;
   y: number;
-  radius: number;
-  maxRadius: number;
-  opacity: number;
-  speed: number;
-  particles: Particle[];
-}
-
-interface Particle {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  life: number;
-  size: number;
+  intensity: number;
+  rippleTime: number;
 }
 
 export const BackgroundRipple = ({
@@ -25,7 +13,7 @@ export const BackgroundRipple = ({
   className?: string;
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const ripplesRef = useRef<Ripple[]>([]);
+  const cellsRef = useRef<Map<string, Cell>>(new Map());
   const [isInView, setIsInView] = useState(true);
 
   useEffect(() => {
@@ -58,6 +46,9 @@ export const BackgroundRipple = ({
     if (!ctx) return;
 
     let animationFrameId: number;
+    const cellSize = 60;
+    const rippleSpeed = 0.03;
+    const fadeSpeed = 0.015;
 
     // Set canvas size
     const resizeCanvas = () => {
@@ -68,75 +59,121 @@ export const BackgroundRipple = ({
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
-    // Check if position overlaps with text or images
-    const isOverContent = (x: number, y: number): boolean => {
-      const elements = document.elementsFromPoint(x, y);
+    // Get cell key
+    const getCellKey = (x: number, y: number) => `${x},${y}`;
+
+    // Get cell coordinates from touch/click position
+    const getCellFromPosition = (posX: number, posY: number) => {
+      return {
+        x: Math.floor(posX / cellSize),
+        y: Math.floor(posY / cellSize),
+      };
+    };
+
+    // Check if a cell area overlaps with text or images
+    const isCellOverContent = (cellX: number, cellY: number): boolean => {
+      const x = cellX * cellSize;
+      const y = cellY * cellSize;
       
-      for (const element of elements) {
-        if (element === canvas || element.tagName === 'CANVAS') continue;
+      // Check center and corners of the cell
+      const checkPoints = [
+        [x + cellSize / 2, y + cellSize / 2], // Center
+        [x + 5, y + 5], // Top-left
+        [x + cellSize - 5, y + 5], // Top-right
+        [x + 5, y + cellSize - 5], // Bottom-left
+        [x + cellSize - 5, y + cellSize - 5], // Bottom-right
+      ];
+      
+      for (const [pointX, pointY] of checkPoints) {
+        const elements = document.elementsFromPoint(pointX, pointY);
         
-        // Check for text content elements
-        if (element.tagName === 'H1' || element.tagName === 'H2' || 
-            element.tagName === 'P' || element.tagName === 'SPAN' ||
-            element.tagName === 'LABEL') {
-          const hasVisibleText = element.textContent && element.textContent.trim().length > 0;
-          const computedStyle = window.getComputedStyle(element);
-          const isVisible = computedStyle.opacity !== '0' && computedStyle.visibility !== 'hidden';
+        for (const element of elements) {
+          // Skip canvas and structural elements
+          if (element === canvas || element.tagName === 'CANVAS') continue;
           
-          if (hasVisibleText && isVisible) {
+          // Check for text content elements
+          if (element.tagName === 'H1' || element.tagName === 'H2' || 
+              element.tagName === 'P' || element.tagName === 'SPAN' ||
+              element.tagName === 'LABEL') {
+            // Check if it actually has visible text
+            const hasVisibleText = element.textContent && element.textContent.trim().length > 0;
+            const computedStyle = window.getComputedStyle(element);
+            const isVisible = computedStyle.opacity !== '0' && computedStyle.visibility !== 'hidden';
+            
+            if (hasVisibleText && isVisible) {
+              return true;
+            }
+          }
+          
+          // Check for images
+          if (element.tagName === 'IMG') {
             return true;
           }
-        }
-        
-        // Check for images
-        if (element.tagName === 'IMG') {
-          return true;
-        }
-        
-        // Check for elements with background images
-        const computedStyle = window.getComputedStyle(element);
-        if (computedStyle.backgroundImage && computedStyle.backgroundImage !== 'none') {
-          return true;
+          
+          // Check for elements with background images
+          const computedStyle = window.getComputedStyle(element);
+          if (computedStyle.backgroundImage && computedStyle.backgroundImage !== 'none') {
+            return true;
+          }
         }
       }
       
       return false;
     };
 
-    // Create particles around the ripple
-    const createParticles = (x: number, y: number, count: number): Particle[] => {
-      const particles: Particle[] = [];
-      for (let i = 0; i < count; i++) {
-        const angle = (Math.PI * 2 * i) / count + Math.random() * 0.5;
-        const speed = 1 + Math.random() * 2;
-        particles.push({
-          x,
-          y,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          life: 1,
-          size: 2 + Math.random() * 3,
-        });
-      }
-      return particles;
+    // Create ripple at cell
+    const createRipple = (cellX: number, cellY: number, intensity: number = 1) => {
+      const key = getCellKey(cellX, cellY);
+      cellsRef.current.set(key, {
+        x: cellX,
+        y: cellY,
+        intensity,
+        rippleTime: 0,
+      });
     };
 
-    // Create ripple at position
-    const createRipple = (x: number, y: number) => {
-      ripplesRef.current.push({
-        x,
-        y,
-        radius: 0,
-        maxRadius: 300 + Math.random() * 200,
-        opacity: 1,
-        speed: 3 + Math.random() * 2,
-        particles: createParticles(x, y, 24),
+    // Spread ripple to neighbors with distance-based intensity
+    const spreadRipple = (cellX: number, cellY: number, intensity: number) => {
+      if (intensity < 0.05) return;
+
+      // Extended neighbor range for smoother spread
+      const neighbors = [
+        // Immediate neighbors (distance 1)
+        [cellX - 1, cellY, 0.75],
+        [cellX + 1, cellY, 0.75],
+        [cellX, cellY - 1, 0.75],
+        [cellX, cellY + 1, 0.75],
+        // Diagonal neighbors (distance ~1.4)
+        [cellX - 1, cellY - 1, 0.65],
+        [cellX + 1, cellY - 1, 0.65],
+        [cellX - 1, cellY + 1, 0.65],
+        [cellX + 1, cellY + 1, 0.65],
+        // Extended neighbors (distance 2)
+        [cellX - 2, cellY, 0.5],
+        [cellX + 2, cellY, 0.5],
+        [cellX, cellY - 2, 0.5],
+        [cellX, cellY + 2, 0.5],
+      ];
+
+      neighbors.forEach(([nx, ny, falloff]) => {
+        const key = getCellKey(nx, ny);
+        const existingCell = cellsRef.current.get(key);
+        const newIntensity = intensity * (falloff as number);
+
+        if (!existingCell || existingCell.intensity < newIntensity) {
+          cellsRef.current.set(key, {
+            x: nx,
+            y: ny,
+            intensity: newIntensity,
+            rippleTime: 0,
+          });
+        }
       });
     };
 
     // Touch/Click handler - only works when in view and in allowed area
     const handleInteraction = (e: TouchEvent | MouseEvent) => {
-      if (!isInView) return;
+      if (!isInView) return; // Don't create ripples when scrolled away
       
       const rect = canvas.getBoundingClientRect();
       let posX: number, posY: number;
@@ -150,16 +187,19 @@ export const BackgroundRipple = ({
       }
 
       // Define the interactive zone (upper-right empty area on mobile)
-      const textContentWidth = canvas.width * 0.55;
-      const imageTopPosition = canvas.height * 0.45;
+      // This is the area to the right of text content and above the image
+      const textContentWidth = canvas.width * 0.55; // Text takes ~55% of width
+      const imageTopPosition = canvas.height * 0.45; // Image starts at ~45% from top
       
+      // Only create ripples in the empty upper-right zone
       const isInAllowedZone = 
-        posX > textContentWidth &&
-        posY < imageTopPosition;
+        posX > textContentWidth && // Right of text content
+        posY < imageTopPosition;   // Above image
       
-      if (!isInAllowedZone) return;
+      if (!isInAllowedZone) return; // Don't create ripples outside the zone
 
-      createRipple(posX, posY);
+      const cell = getCellFromPosition(posX, posY);
+      createRipple(cell.x, cell.y, 1.2);
     };
 
     canvas.addEventListener("touchstart", handleInteraction);
@@ -171,139 +211,72 @@ export const BackgroundRipple = ({
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw subtle grid background
+      // Draw grid - visible everywhere
       ctx.strokeStyle = "rgba(255, 255, 255, 0.025)";
       ctx.lineWidth = 1;
 
-      const gridSize = 60;
-      for (let x = 0; x <= canvas.width; x += gridSize) {
+      // Vertical lines
+      for (let x = 0; x <= canvas.width; x += cellSize) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, canvas.height);
         ctx.stroke();
       }
 
-      for (let y = 0; y <= canvas.height; y += gridSize) {
+      // Horizontal lines
+      for (let y = 0; y <= canvas.height; y += cellSize) {
         ctx.beginPath();
         ctx.moveTo(0, y);
         ctx.lineTo(canvas.width, y);
         ctx.stroke();
       }
 
-      // Update and draw ripples
-      ripplesRef.current = ripplesRef.current.filter(ripple => {
-        ripple.radius += ripple.speed;
-        ripple.opacity = 1 - (ripple.radius / ripple.maxRadius);
+      // Update and draw cells
+      const cellsToRemove: string[] = [];
+      const cellsToSpread: Array<{ x: number; y: number; intensity: number }> = [];
 
-        if (ripple.opacity <= 0) return false;
+      cellsRef.current.forEach((cell, key) => {
+        cell.rippleTime += rippleSpeed;
 
-        // Draw multiple concentric rings with chromatic aberration effect
-        const rings = 3;
-        for (let i = 0; i < rings; i++) {
-          const ringRadius = ripple.radius - i * 15;
-          if (ringRadius < 0) continue;
-
-          const ringOpacity = ripple.opacity * (1 - i * 0.2);
-
-          // Check if ring overlaps content
-          const checkPoints = 8;
-          let hasOverlap = false;
-          for (let j = 0; j < checkPoints; j++) {
-            const angle = (Math.PI * 2 * j) / checkPoints;
-            const checkX = ripple.x + Math.cos(angle) * ringRadius;
-            const checkY = ripple.y + Math.sin(angle) * ringRadius;
-            if (isOverContent(checkX, checkY)) {
-              hasOverlap = true;
-              break;
-            }
-          }
-
-          if (hasOverlap) continue;
-
-          // Chromatic aberration - RGB separation
-          const offset = i * 2;
-          
-          // Red channel
-          ctx.strokeStyle = `rgba(239, 68, 68, ${ringOpacity * 0.3})`;
-          ctx.lineWidth = 3 - i;
-          ctx.beginPath();
-          ctx.arc(ripple.x - offset, ripple.y, ringRadius, 0, Math.PI * 2);
-          ctx.stroke();
-
-          // Blue channel (main)
-          ctx.strokeStyle = `rgba(56, 189, 248, ${ringOpacity * 0.8})`;
-          ctx.lineWidth = 4 - i;
-          ctx.shadowBlur = 20;
-          ctx.shadowColor = `rgba(56, 189, 248, ${ringOpacity * 0.6})`;
-          ctx.beginPath();
-          ctx.arc(ripple.x, ripple.y, ringRadius, 0, Math.PI * 2);
-          ctx.stroke();
-
-          // Green/Cyan channel
-          ctx.strokeStyle = `rgba(125, 211, 252, ${ringOpacity * 0.4})`;
-          ctx.lineWidth = 2 - i * 0.5;
-          ctx.beginPath();
-          ctx.arc(ripple.x + offset, ripple.y, ringRadius, 0, Math.PI * 2);
-          ctx.stroke();
-
-          ctx.shadowBlur = 0;
+        // Spread ripple to neighbors at specific time intervals
+        if (cell.rippleTime > 0.08 && cell.rippleTime < 0.12) {
+          cellsToSpread.push({ x: cell.x, y: cell.y, intensity: cell.intensity });
         }
 
-        // Draw and update particles
-        ripple.particles = ripple.particles.filter(particle => {
-          particle.x += particle.vx;
-          particle.y += particle.vy;
-          particle.life -= 0.015;
-          
-          if (particle.life <= 0) return false;
+        // Fade out
+        cell.intensity -= fadeSpeed;
 
-          // Check if particle is over content
-          if (isOverContent(particle.x, particle.y)) return false;
-
-          // Draw particle with glow
-          const gradient = ctx.createRadialGradient(
-            particle.x, particle.y, 0,
-            particle.x, particle.y, particle.size * 2
-          );
-          gradient.addColorStop(0, `rgba(56, 189, 248, ${particle.life * 0.9})`);
-          gradient.addColorStop(0.5, `rgba(56, 189, 248, ${particle.life * 0.5})`);
-          gradient.addColorStop(1, `rgba(56, 189, 248, 0)`);
-
-          ctx.fillStyle = gradient;
-          ctx.beginPath();
-          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Add trail effect
-          ctx.strokeStyle = `rgba(125, 211, 252, ${particle.life * 0.3})`;
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(particle.x - particle.vx * 3, particle.y - particle.vy * 3);
-          ctx.lineTo(particle.x, particle.y);
-          ctx.stroke();
-
-          return true;
-        });
-
-        // Draw energy pulse at center
-        if (ripple.radius < 50) {
-          const pulseSize = 8 + ripple.radius * 0.3;
-          const pulseGradient = ctx.createRadialGradient(
-            ripple.x, ripple.y, 0,
-            ripple.x, ripple.y, pulseSize
-          );
-          pulseGradient.addColorStop(0, `rgba(255, 255, 255, ${ripple.opacity * 0.8})`);
-          pulseGradient.addColorStop(0.4, `rgba(56, 189, 248, ${ripple.opacity * 0.6})`);
-          pulseGradient.addColorStop(1, `rgba(56, 189, 248, 0)`);
-
-          ctx.fillStyle = pulseGradient;
-          ctx.beginPath();
-          ctx.arc(ripple.x, ripple.y, pulseSize, 0, Math.PI * 2);
-          ctx.fill();
+        if (cell.intensity <= 0) {
+          cellsToRemove.push(key);
+          return;
         }
 
-        return true;
+        // ONLY DRAW RIPPLE IF NOT OVER CONTENT
+        if (isCellOverContent(cell.x, cell.y)) {
+          return; // Skip rendering this cell, but keep it in the map for spreading
+        }
+
+        // Draw cell - simple and clean like reference
+        const x = cell.x * cellSize;
+        const y = cell.y * cellSize;
+
+        const easedIntensity = 1 - Math.pow(1 - Math.min(cell.intensity, 1), 2);
+        
+        // Simple fill - subtle glow
+        ctx.fillStyle = `rgba(56, 189, 248, ${easedIntensity * 0.15})`;
+        ctx.fillRect(x, y, cellSize, cellSize);
+
+        // Border only
+        ctx.strokeStyle = `rgba(56, 189, 248, ${easedIntensity * 0.4})`;
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(x, y, cellSize, cellSize);
       });
+
+      // Remove faded cells
+      cellsToRemove.forEach(key => cellsRef.current.delete(key));
+
+      // Spread ripples
+      cellsToSpread.forEach(({ x, y, intensity }) => spreadRipple(x, y, intensity));
 
       animationFrameId = requestAnimationFrame(animate);
     };
