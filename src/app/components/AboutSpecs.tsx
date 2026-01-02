@@ -21,9 +21,10 @@ function SplitText({ text, className }: { text: string, className?: string }) {
       whileInView="visible"
       viewport={{ once: true, margin: "-100px" }}
       className={`${className} flex flex-wrap`}
+      style={{ lineHeight: '0.95' }}
     >
       {text.split(" ").map((word, wIndex) => (
-        <span key={`word-${wIndex}`} className="inline-flex overflow-hidden mr-[0.35em]">
+        <span key={`word-${wIndex}`} className="inline-flex mr-[0.35em] pb-1">
             {word.split("").map((char, cIndex) => {
                 const globalIndex = wIndex * 10 + cIndex;
                 return (

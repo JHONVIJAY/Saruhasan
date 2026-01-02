@@ -46,7 +46,7 @@ export function HeroSolid() {
   return (
     <section 
       id="index" 
-      className="relative w-full min-h-screen bg-[#050505] flex flex-col items-center pt-16 md:pt-32 pb-8 md:pb-12 px-4 md:px-8 overflow-hidden"
+      className="relative w-full min-h-screen bg-[#050505] flex flex-col items-center pt-16 md:pt-32 pb-16 md:pb-20 px-4 md:px-8 overflow-hidden"
     >
       
       {/* BACKGROUND RIPPLE EFFECT - MOBILE ONLY */}
@@ -115,15 +115,27 @@ export function HeroSolid() {
 
       {/* BOTTOM TEXT */}
       <div className="w-full max-w-[1800px] flex flex-col md:flex-row justify-between items-start md:items-end relative z-10 pt-4 md:pt-12 gap-4 md:gap-0 pointer-events-none">
-           <motion.div
-             initial={{ opacity: 0 }}
-             animate={{ opacity: 1 }}
-             transition={{ delay: 1, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-             className="flex gap-3 md:gap-4 items-center"
-           >
+           <div className="flex flex-col gap-6 md:gap-8">
+             <motion.div
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               transition={{ delay: 1, duration: 1, ease: [0.22, 1, 0.36, 1] }}
+               className="flex gap-3 md:gap-4 items-center"
+             >
                <div className="w-2 h-2 bg-sky-500 rounded-full animate-pulse" />
                <span className="text-white/60 font-mono text-[10px] md:text-xs uppercase tracking-widest">Available for hire</span>
-           </motion.div>
+             </motion.div>
+
+             <motion.p
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ delay: 1.2, duration: 1, ease: [0.22, 1, 0.36, 1] }}
+               className="text-white/90 font-bold text-lg md:text-2xl max-w-2xl pb-4"
+               style={{ lineHeight: '1.8' }}
+             >
+               Engineering digital perfection through rigorous design & code.
+             </motion.p>
+           </div>
 
            <div className="pointer-events-none">
                <SplitText 
