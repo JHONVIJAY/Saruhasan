@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import heroImg from "../../assets/0575f999a9ea5865df7e385148b08517b640dc26.png";
+import heroImg from "figma:asset/0575f999a9ea5865df7e385148b08517b640dc26.png";
 import { ArrowDown } from "lucide-react";
 import { BackgroundRipple } from "./ui/BackgroundRipple";
 
@@ -46,14 +46,14 @@ export function HeroSolid() {
   return (
     <section 
       id="index" 
-      className="relative w-full min-h-screen bg-[#050505] flex flex-col items-center pt-24 md:pt-32 pb-12 px-4 md:px-8 overflow-x-hidden"
+      className="relative w-full min-h-screen bg-[#050505] flex flex-col items-center pt-16 md:pt-32 pb-8 md:pb-12 px-4 md:px-8 overflow-hidden"
     >
       
       {/* BACKGROUND RIPPLE EFFECT - MOBILE ONLY */}
       <BackgroundRipple className="absolute inset-0 z-0 md:hidden" />
       
       {/* TOP TEXT */}
-      <div className="w-full max-w-[1800px] flex flex-col md:flex-row justify-between items-start md:items-end relative z-10 mb-8 md:mb-12 overflow-visible pointer-events-none">
+      <div className="w-full max-w-[1800px] flex flex-col md:flex-row justify-between items-start md:items-end relative z-10 mb-4 md:mb-12 overflow-visible pointer-events-none">
           <div className="flex flex-col overflow-visible pointer-events-none">
               <SplitText 
                 text="SARU" 
@@ -69,7 +69,7 @@ export function HeroSolid() {
              initial={{ opacity: 0 }}
              animate={{ opacity: 1 }}
              transition={{ delay: 0.6, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-             className="mt-6 md:mt-0 md:text-right pointer-events-none"
+             className="mt-4 md:mt-0 md:text-right pointer-events-none"
           >
               <h2 className="text-white font-medium text-base md:text-xl mb-2">The Dual Identity</h2>
               <p className="text-white/50 text-xs md:text-sm font-mono uppercase tracking-widest max-w-xs md:ml-auto">
@@ -81,7 +81,7 @@ export function HeroSolid() {
       </div>
 
       {/* IMAGE CONTAINER */}
-      <div className="relative w-full max-w-[1400px] h-[40vh] md:h-[65vh] overflow-hidden bg-[#111] pointer-events-none">
+      <div className="relative w-full max-w-[1400px] h-[40vh] md:h-[65vh] overflow-hidden bg-[#050505] pointer-events-none">
           <motion.div 
             style={{ y, opacity }} 
             className="w-full h-full"
@@ -114,7 +114,7 @@ export function HeroSolid() {
       </div>
 
       {/* BOTTOM TEXT */}
-      <div className="w-full max-w-[1800px] flex flex-col md:flex-row justify-between items-start md:items-end relative z-10 mt-auto pt-8 md:pt-12 gap-6 md:gap-0 pointer-events-none">
+      <div className="w-full max-w-[1800px] flex flex-col md:flex-row justify-between items-start md:items-end relative z-10 pt-4 md:pt-12 gap-4 md:gap-0 pointer-events-none">
            <motion.div
              initial={{ opacity: 0 }}
              animate={{ opacity: 1 }}
