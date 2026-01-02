@@ -14,6 +14,29 @@ export const BackgroundRipple = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const cellsRef = useRef<Map<string, Cell>>(new Map());
+  const [isInView, setIsInView] = useState(true);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    // Scroll handler to detect if hero is in view
+    const handleScroll = () => {
+      const heroSection = document.getElementById('index');
+      if (!heroSection) return;
+      
+      const rect = heroSection.getBoundingClientRect();
+      const inView = rect.top < window.innerHeight && rect.bottom > 0;
+      setIsInView(inView);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check initial state
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -148,8 +171,10 @@ export const BackgroundRipple = ({
       });
     };
 
-    // Touch/Click handler - now accepts all clicks
+    // Touch/Click handler - only works when in view and in allowed area
     const handleInteraction = (e: TouchEvent | MouseEvent) => {
+      if (!isInView) return; // Don't create ripples when scrolled away
+      
       const rect = canvas.getBoundingClientRect();
       let posX: number, posY: number;
 
@@ -160,6 +185,18 @@ export const BackgroundRipple = ({
         posX = e.clientX - rect.left;
         posY = e.clientY - rect.top;
       }
+
+      // Define the interactive zone (upper-right empty area on mobile)
+      // This is the area to the right of text content and above the image
+      const textContentWidth = canvas.width * 0.55; // Text takes ~55% of width
+      const imageTopPosition = canvas.height * 0.45; // Image starts at ~45% from top
+      
+      // Only create ripples in the empty upper-right zone
+      const isInAllowedZone = 
+        posX > textContentWidth && // Right of text content
+        posY < imageTopPosition;   // Above image
+      
+      if (!isInAllowedZone) return; // Don't create ripples outside the zone
 
       const cell = getCellFromPosition(posX, posY);
       createRipple(cell.x, cell.y, 1.2);
@@ -252,7 +289,7 @@ export const BackgroundRipple = ({
       canvas.removeEventListener("click", handleInteraction);
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [isInView]);
 
   return (
     <canvas
