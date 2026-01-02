@@ -47,8 +47,8 @@ export const BackgroundRipple = ({
 
     let animationFrameId: number;
     const cellSize = 60;
-    const rippleSpeed = 0.03;
-    const fadeSpeed = 0.015;
+    const rippleSpeed = 0.05; // Increased from 0.03 for faster animation
+    const fadeSpeed = 0.008; // Decreased from 0.015 for longer fade (more elegant)
 
     // Set canvas size
     const resizeCanvas = () => {
@@ -138,21 +138,26 @@ export const BackgroundRipple = ({
 
       // Extended neighbor range for smoother spread
       const neighbors = [
-        // Immediate neighbors (distance 1)
-        [cellX - 1, cellY, 0.75],
-        [cellX + 1, cellY, 0.75],
-        [cellX, cellY - 1, 0.75],
-        [cellX, cellY + 1, 0.75],
+        // Immediate neighbors (distance 1) - STRONGER falloff
+        [cellX - 1, cellY, 0.85],
+        [cellX + 1, cellY, 0.85],
+        [cellX, cellY - 1, 0.85],
+        [cellX, cellY + 1, 0.85],
         // Diagonal neighbors (distance ~1.4)
-        [cellX - 1, cellY - 1, 0.65],
-        [cellX + 1, cellY - 1, 0.65],
-        [cellX - 1, cellY + 1, 0.65],
-        [cellX + 1, cellY + 1, 0.65],
+        [cellX - 1, cellY - 1, 0.75],
+        [cellX + 1, cellY - 1, 0.75],
+        [cellX - 1, cellY + 1, 0.75],
+        [cellX + 1, cellY + 1, 0.75],
         // Extended neighbors (distance 2)
-        [cellX - 2, cellY, 0.5],
-        [cellX + 2, cellY, 0.5],
-        [cellX, cellY - 2, 0.5],
-        [cellX, cellY + 2, 0.5],
+        [cellX - 2, cellY, 0.65],
+        [cellX + 2, cellY, 0.65],
+        [cellX, cellY - 2, 0.65],
+        [cellX, cellY + 2, 0.65],
+        // Far neighbors (distance 3) - for wider spread
+        [cellX - 3, cellY, 0.45],
+        [cellX + 3, cellY, 0.45],
+        [cellX, cellY - 3, 0.45],
+        [cellX, cellY + 3, 0.45],
       ];
 
       neighbors.forEach(([nx, ny, falloff]) => {
@@ -199,7 +204,7 @@ export const BackgroundRipple = ({
       if (!isInAllowedZone) return; // Don't create ripples outside the zone
 
       const cell = getCellFromPosition(posX, posY);
-      createRipple(cell.x, cell.y, 1.2);
+      createRipple(cell.x, cell.y, 1.5); // Increased from 1.2
     };
 
     canvas.addEventListener("touchstart", handleInteraction);
@@ -238,8 +243,8 @@ export const BackgroundRipple = ({
       cellsRef.current.forEach((cell, key) => {
         cell.rippleTime += rippleSpeed;
 
-        // Spread ripple to neighbors at specific time intervals
-        if (cell.rippleTime > 0.08 && cell.rippleTime < 0.12) {
+        // Spread ripple to neighbors at specific time intervals - FASTER spread
+        if (cell.rippleTime > 0.05 && cell.rippleTime < 0.1) {
           cellsToSpread.push({ x: cell.x, y: cell.y, intensity: cell.intensity });
         }
 
@@ -256,20 +261,50 @@ export const BackgroundRipple = ({
           return; // Skip rendering this cell, but keep it in the map for spreading
         }
 
-        // Draw cell - simple and clean like reference
+        // Draw cell - MODERN ENHANCED VERSION
         const x = cell.x * cellSize;
         const y = cell.y * cellSize;
 
-        const easedIntensity = 1 - Math.pow(1 - Math.min(cell.intensity, 1), 2);
+        // Advanced easing for more dramatic effect
+        const easedIntensity = Math.sin((Math.min(cell.intensity, 1) * Math.PI) / 2); // Sine ease-out
+        const pulseEffect = Math.sin(cell.rippleTime * 8) * 0.1 + 0.9; // Subtle pulse
+        const finalIntensity = easedIntensity * pulseEffect;
         
-        // Simple fill - subtle glow
-        ctx.fillStyle = `rgba(56, 189, 248, ${easedIntensity * 0.15})`;
+        // Layer 1: Outer glow (soft shadow effect)
+        ctx.shadowBlur = 25;
+        ctx.shadowColor = `rgba(56, 189, 248, ${finalIntensity * 0.6})`;
+        ctx.fillStyle = `rgba(56, 189, 248, ${finalIntensity * 0.08})`;
+        ctx.fillRect(x - 2, y - 2, cellSize + 4, cellSize + 4);
+        
+        // Layer 2: Main fill with gradient effect
+        const gradient = ctx.createRadialGradient(
+          x + cellSize / 2, y + cellSize / 2, 0,
+          x + cellSize / 2, y + cellSize / 2, cellSize * 0.8
+        );
+        gradient.addColorStop(0, `rgba(56, 189, 248, ${finalIntensity * 0.35})`);
+        gradient.addColorStop(0.6, `rgba(56, 189, 248, ${finalIntensity * 0.2})`);
+        gradient.addColorStop(1, `rgba(56, 189, 248, ${finalIntensity * 0.05})`);
+        
+        ctx.shadowBlur = 15;
+        ctx.fillStyle = gradient;
         ctx.fillRect(x, y, cellSize, cellSize);
 
-        // Border only
-        ctx.strokeStyle = `rgba(56, 189, 248, ${easedIntensity * 0.4})`;
-        ctx.lineWidth = 1.5;
+        // Layer 3: Bright border with enhanced glow
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = `rgba(56, 189, 248, ${finalIntensity * 0.8})`;
+        ctx.strokeStyle = `rgba(56, 189, 248, ${finalIntensity * 0.7})`;
+        ctx.lineWidth = 2;
         ctx.strokeRect(x, y, cellSize, cellSize);
+        
+        // Layer 4: Inner bright accent (for extra pop)
+        ctx.shadowBlur = 10;
+        ctx.strokeStyle = `rgba(125, 211, 252, ${finalIntensity * 0.9})`; // Lighter sky-300
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x + 3, y + 3, cellSize - 6, cellSize - 6);
+        
+        // Reset shadow
+        ctx.shadowBlur = 0;
+        ctx.shadowColor = 'transparent';
       });
 
       // Remove faded cells
