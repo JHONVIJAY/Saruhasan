@@ -211,22 +211,26 @@ export const BackgroundRipple = ({
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw grid - visible everywhere
+      // Define the grid zone (upper-right empty area)
+      const gridStartX = canvas.width * 0.55; // Start from 55% of width (right of text)
+      const gridEndY = canvas.height * 0.45; // End at 45% of height (above image)
+
+      // Draw grid - ONLY in the designated zone
       ctx.strokeStyle = "rgba(255, 255, 255, 0.025)";
       ctx.lineWidth = 1;
 
-      // Vertical lines
-      for (let x = 0; x <= canvas.width; x += cellSize) {
+      // Vertical lines - only in the zone
+      for (let x = Math.ceil(gridStartX / cellSize) * cellSize; x <= canvas.width; x += cellSize) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
+        ctx.lineTo(x, gridEndY);
         ctx.stroke();
       }
 
-      // Horizontal lines
-      for (let y = 0; y <= canvas.height; y += cellSize) {
+      // Horizontal lines - only in the zone
+      for (let y = 0; y <= gridEndY; y += cellSize) {
         ctx.beginPath();
-        ctx.moveTo(0, y);
+        ctx.moveTo(gridStartX, y);
         ctx.lineTo(canvas.width, y);
         ctx.stroke();
       }
