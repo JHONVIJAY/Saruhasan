@@ -16,7 +16,7 @@ export function Hero() {
         className="absolute inset-0 z-0"
       >
         <img 
-          src="https://images.unsplash.com/photo-1763616301941-d349f6681d82?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxicnV0YWxpc3QlMjBhcmNoaXRlY3R1cmUlMjBjb25jcmV0ZSUyMG1pbmltYWxpc3QlMjBkYXJrfGVufDF8fHx8MTc2NzE1NDE0OHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+          src="https://images.unsplash.com/photo-1763616301941-d349f6681d82?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxicnV0YWxpc3QlMjBhcmNoaXRlY3R1cmUlMjBjb25jcmV0ZSUyMG1pbmltYWxpc3QlMjBkYXJrfGVufDF8fHx8MTc2NzE1NDE0OHww&ixlib=rb-4.1.0&q=80&w=1080"
           alt="Abstract Architecture"
           className="w-full h-full object-cover object-center brightness-[0.3] contrast-125"
         />

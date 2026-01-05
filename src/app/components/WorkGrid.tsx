@@ -89,10 +89,10 @@ function ProjectItem({ project, index }: { project: any, index: number }) {
                href={project.link} 
                target="_blank"
                rel="noopener noreferrer"
-               className="inline-flex items-center gap-2 text-white/60 hover:text-sky-400 active:text-sky-400 transition-colors duration-300 pb-1 border-b border-white/10 hover:border-sky-400 active:border-sky-400 w-fit group/link"
+               className="inline-flex items-center gap-2 text-white/60 hover:text-sky-400 active:text-sky-400 transition-colors duration-500 pb-1 border-b border-white/10 hover:border-sky-400 active:border-sky-400 w-fit group/link"
             >
                <span className="font-mono text-xs md:text-sm uppercase tracking-widest">View Project</span>
-               <ArrowUpRight className="w-4 h-4 group-hover/link:translate-x-1 group-hover/link:-translate-y-1 transition-transform duration-500" />
+               <ArrowUpRight className="w-4 h-4 group-hover/link:translate-x-1 group-hover/link:-translate-y-1 transition-transform duration-700" />
             </a>
          </div>
 
@@ -106,7 +106,7 @@ function ProjectItem({ project, index }: { project: any, index: number }) {
 
 export function WorkGrid() {
   return (
-    <section id="works" className="bg-[#050505] text-white py-16 md:py-24 lg:py-32 relative z-10">
+    <section id="works" className="bg-[#050505] text-white py-20 md:py-32 lg:py-40 relative z-10">
       <div className="container mx-auto px-4 md:px-8">
         
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 relative">
@@ -137,7 +137,7 @@ export function WorkGrid() {
 
                  <div className="hidden lg:flex flex-col gap-2">
                     {resumeData.projects.map((p, i) => (
-                       <div key={i} className="flex items-center gap-4 text-white/20 hover:text-white transition-colors cursor-default">
+                       <div key={i} className="flex items-center gap-4 text-white/20 hover:text-white transition-colors duration-500 cursor-default">
                           <span className="font-mono text-xs">0{i + 1}</span>
                           <span className="text-sm uppercase tracking-wider">{p.title}</span>
                        </div>

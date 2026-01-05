@@ -21,7 +21,7 @@ export function HeroDual() {
       
       {/* Background Ambience */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1760978631939-32968f2e1813?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMGRhcmslMjBmdXR1cmlzdGljJTIwZGlnaXRhbCUyMHRleHR1cmV8ZW58MXx8fHwxNzY3MTU0NzE2fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral')] bg-cover bg-center opacity-20 mix-blend-color-dodge" />
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1760978631939-32968f2e1813?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMGRhcmslMjBmdXR1cmlzdGljJTIwZGlnaXRhbCUyMHRleHR1cmV8ZW58MXx8fHwxNzY3MTU0NzE2fDA&ixlib=rb-4.1.0&q=80&w=1080')] bg-cover bg-center opacity-20 mix-blend-color-dodge" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050505]/80 to-[#050505]" />
       </div>
 

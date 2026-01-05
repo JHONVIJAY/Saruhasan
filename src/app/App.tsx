@@ -1,7 +1,7 @@
 import { NavbarMix } from "./components/NavbarMix";
-import { HeroSolid } from "./components/HeroSolid"; // Solid layout
+import { HeroSolid } from "./components/HeroSolid";
 import { Marquee } from "./components/Marquee";
-import { WorkGrid } from "./components/WorkGrid"; // Grid layout
+import { WorkGrid } from "./components/WorkGrid";
 import { ExperienceEditorial } from "./components/ExperienceEditorial";
 import { AboutSpecs } from "./components/AboutSpecs";
 import { Grain } from "./components/Grain";

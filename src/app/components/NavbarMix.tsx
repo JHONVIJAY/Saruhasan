@@ -55,10 +55,10 @@ export function NavbarMix() {
     <motion.nav 
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        transition={{ delay: 0.8, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center p-4 md:p-6 lg:p-8 mix-blend-difference text-white pointer-events-none"
+        transition={{ delay: 0.8, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+        className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center p-4 md:p-6 lg:p-8 bg-white/10 backdrop-blur-2xl border-b border-white/20 shadow-xl shadow-black/50 text-white"
     >
-        <div className="pointer-events-auto min-w-[120px] md:min-w-[140px]">
+        <div className="min-w-[120px] md:min-w-[140px]">
              <a href="#index" className="block relative h-6 md:h-8 overflow-hidden">
                 <AnimatePresence mode="wait">
                     <motion.div
@@ -91,31 +91,49 @@ export function NavbarMix() {
              </a>
         </div>
 
-        <div className="pointer-events-auto hidden md:flex gap-6 lg:gap-8">
+        <div className="hidden md:flex gap-6 lg:gap-8">
              {[
                { name: 'Index', href: '#index' },
                { name: 'Works', href: '#works' },
                { name: 'Profile', href: '#profile' },
                { name: 'Contact', href: '#contact' }
              ].map((item, i) => (
-                 <a key={i} href={item.href} className="font-mono text-xs uppercase tracking-widest hover:text-sky-400 transition-colors duration-300 underline-offset-4 hover:underline">
+                 <a key={i} href={item.href} className="relative font-mono text-xs uppercase tracking-widest text-white/70 hover:text-white transition-colors duration-500 group">
                      {item.name}
+                     <motion.span 
+                       className="absolute -bottom-1 left-0 h-[1px] bg-sky-400 origin-left w-full"
+                       initial={{ scaleX: 0 }}
+                       whileHover={{ scaleX: 1 }}
+                       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                     />
                  </a>
              ))}
         </div>
 
-        <div className="pointer-events-auto md:hidden">
-            <button 
+        <div className="md:hidden">
+            <motion.button 
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="relative z-[100] transition-transform active:scale-95 duration-200"
+                whileTap={{ scale: 0.9 }}
+                transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                className="relative z-[100] bg-[#050505]/80 backdrop-blur-xl border border-white/20 rounded-md p-2 touch-manipulation"
                 aria-label="Toggle menu"
             >
-                {mobileMenuOpen ? (
-                    <X className="w-6 h-6" />
-                ) : (
-                    <span className="font-mono text-xs uppercase tracking-widest">Menu</span>
-                )}
-            </button>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={mobileMenuOpen ? "close" : "open"}
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    {mobileMenuOpen ? (
+                        <X className="w-6 h-6" />
+                    ) : (
+                        <span className="font-mono text-xs uppercase tracking-widest px-1">Menu</span>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+            </motion.button>
         </div>
     </motion.nav>
 
@@ -126,8 +144,8 @@ export function NavbarMix() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-0 z-[90] bg-[#050505] md:hidden overflow-hidden"
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed inset-0 z-[90] bg-[#050505]/98 backdrop-blur-lg md:hidden overflow-hidden"
             onClick={() => setMobileMenuOpen(false)}
         >
             {/* Subtle gradient overlay */}
@@ -156,9 +174,9 @@ export function NavbarMix() {
                         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                         exit={{ opacity: 0, y: -30, filter: "blur(10px)" }}
                         transition={{ 
-                            duration: 0.5, 
-                            delay: i * 0.08,
-                            ease: [0.16, 1, 0.3, 1]
+                            duration: 0.6, 
+                            delay: i * 0.1,
+                            ease: [0.22, 1, 0.36, 1]
                         }}
                         onClick={(e) => {
                             e.preventDefault();
@@ -168,27 +186,18 @@ export function NavbarMix() {
                                 element?.scrollIntoView({ behavior: 'smooth' });
                             }, 300);
                         }}
-                        className="group relative text-5xl font-black uppercase tracking-tighter text-white overflow-hidden active:scale-95 transition-transform duration-200"
+                        className="group relative text-5xl font-black uppercase tracking-tighter text-white overflow-hidden"
                     >
-                        {/* Hover effect background */}
-                        <motion.div 
-                            className="absolute inset-0 bg-sky-400/10 -z-10 rounded-lg"
-                            initial={{ scaleX: 0 }}
-                            whileTap={{ scaleX: 1 }}
-                            transition={{ duration: 0.2 }}
-                            style={{ originX: 0 }}
-                        />
-                        
-                        <span className="relative inline-block group-active:text-sky-400 transition-colors duration-200">
+                        <span className="relative inline-block">
                             {item.name}
                         </span>
                         
                         {/* Underline effect */}
                         <motion.div 
-                            className="absolute bottom-0 left-0 h-[2px] bg-sky-400"
+                            className="absolute -bottom-2 left-0 right-0 h-[2px] bg-sky-400"
                             initial={{ scaleX: 0 }}
                             whileTap={{ scaleX: 1 }}
-                            transition={{ duration: 0.2 }}
+                            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                             style={{ originX: 0 }}
                         />
                     </motion.a>
@@ -199,7 +208,7 @@ export function NavbarMix() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.5, delay: 0.32, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
                     className="mt-8 text-center"
                 >
                     <div className="flex items-center justify-center gap-2 mb-4">

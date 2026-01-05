@@ -46,7 +46,7 @@ function SplitText({ text, className }: { text: string, className?: string }) {
 
 export function AboutSpecs() {
   return (
-    <section id="profile" className="relative z-10 bg-[#050505] text-[#EAEAEA] py-16 md:py-24 lg:py-32">
+    <section id="profile" className="relative z-10 bg-[#050505] text-[#EAEAEA] py-20 md:py-32 lg:py-40">
       <div className="container mx-auto px-4 md:px-8 max-w-[1800px]">
         
         {/* Intro */}
@@ -107,7 +107,7 @@ export function AboutSpecs() {
                  <h3 className="font-mono text-xs uppercase tracking-widest text-white/50 mb-6 md:mb-8">Toolkit</h3>
                  <div className="flex flex-wrap gap-2">
                      {resumeData.tools.map((tool, i) => (
-                         <span key={i} className="px-3 md:px-4 py-1.5 md:py-2 border border-white/20 rounded-full text-xs md:text-sm font-mono hover:bg-white hover:text-black transition-all duration-300 cursor-default">
+                         <span key={i} className="px-3 md:px-4 py-1.5 md:py-2 border border-white/20 rounded-full text-xs md:text-sm font-mono hover:bg-white hover:text-black transition-all duration-500 cursor-default">
                              {tool}
                          </span>
                      ))}

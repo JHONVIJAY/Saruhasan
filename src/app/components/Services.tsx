@@ -8,28 +8,28 @@ const services = [
     id: "01",
     title: "Web Development",
     description: "Building scalable, high-performance web applications using modern technologies.",
-    src: "https://images.unsplash.com/photo-1649451844813-3130d6f42f8a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb2RpbmclMjB0ZWNobm9sb2d5JTIwbWluaW1hbGlzdCUyMGRhcmslMjBmdXR1cmlzdGljfGVufDF8fHx8MTc2NzE1Mzk5N3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    src: "https://images.unsplash.com/photo-1649451844813-3130d6f42f8a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb2RpbmclMjB0ZWNobm9sb2d5JTIwbWluaW1hbGlzdCUyMGRhcmt8ZW58MXx8fHwxNzY3MTU0zk5N3ww&ixlib=rb-4.1.0&q=80&w=1080",
     tags: ["React", "Next.js", "Node.js"]
   },
   {
     id: "02",
     title: "Interaction Design",
     description: "Creating immersive digital experiences with fluid animations and intuitive interfaces.",
-    src: "https://images.unsplash.com/photo-1764258906159-3f5952286f5e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmbHVpZCUyMG5lb24lMjBhYnN0cmFjdCUyMG1vdGlvbiUyMGRlc2lnbiUyMGRhcmt8ZW58MXx8fHwxNzY3MTU0MDAwfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    src: "https://images.unsplash.com/photo-1764258906159-3f5952286f5e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmbHVpZCUyMG5lb24lMjBhYnN0cmFjdCUyMG1vdGlvbiUyMGRlc2lnbiUyMGRhcmt8ZW58MXx8fHwxNzY3MTU0MDAwfDA&ixlib=rb-4.1.0&q=80&w=1080",
     tags: ["WebGL", "Framer Motion", "Three.js"]
   },
   {
     id: "03",
     title: "Design Systems",
     description: "Architecting consistent and scalable design languages for enterprise applications.",
-    src: "https://images.unsplash.com/photo-1729258171691-4faf8962d2fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcmNoaXRlY3R1cmUlMjBncmlkJTIwZ2VvbWV0cmljJTIwbWluaW1hbGlzdCUyMGRhcmt8ZW58MXx8fHwxNzY3MTU0MDAzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    src: "https://images.unsplash.com/photo-1729258171691-4faf8962d2fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcmNoaXRlY3R1cmUlMjBncmlkJTIwZ2VvbWV0cmljJTIwbWluaW1hbGlzdCUyMGRhcmt8ZW58MXx8fHwxNzY3MTU0MDAzfDA&ixlib=rb-4.1.0&q=80&w=1080",
     tags: ["Architecture", "Tokens", "Components"]
   },
   {
     id: "04",
     title: "Technical Strategy",
     description: "Consulting on technology stack selection, performance optimization, and best practices.",
-    src: "https://images.unsplash.com/photo-1763461092888-4f69d1ebc492?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMHN0cmF0ZWd5JTIwbWluaW1hbGlzdCUyMGRhcmslMjBjaGVzc3xlbnwxfHx8fDE3NjcxNTQwMDZ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    src: "https://images.unsplash.com/photo-1763461092888-4f69d1ebc492?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMHN0cmF0ZWd5JTIwbWluaW1hbGlzdCUyMGRhcmslMjBjaGVzc3xlbnwxfHx8fDE3NjcxNTQwMDZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
     tags: ["Performance", "SEO", "Accessibility"]
   }
 ];

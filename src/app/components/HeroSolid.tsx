@@ -46,7 +46,7 @@ export function HeroSolid() {
   return (
     <section 
       id="index" 
-      className="relative w-full min-h-screen bg-[#050505] flex flex-col items-center pt-16 md:pt-32 pb-16 md:pb-20 px-4 md:px-8 overflow-hidden"
+      className="relative w-full min-h-screen bg-[#050505] flex flex-col items-center pt-20 md:pt-32 pb-20 md:pb-24 px-4 md:px-8 overflow-hidden"
     >
       
       {/* BACKGROUND RIPPLE EFFECT - MOBILE ONLY */}

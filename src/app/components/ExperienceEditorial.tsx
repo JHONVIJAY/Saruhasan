@@ -39,7 +39,7 @@ function SplitText({ text, className }: { text: string, className?: string }) {
 
 export function ExperienceEditorial() {
   return (
-    <section className="relative z-10 bg-[#050505] text-[#EAEAEA] py-16 md:py-24 lg:py-32 border-b border-white/10">
+    <section id="experience" className="relative z-10 bg-[#050505] text-[#EAEAEA] py-20 md:py-32 lg:py-40 border-b border-white/10">
       <div className="container mx-auto px-4 md:px-8 max-w-[1800px]">
         
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
@@ -83,7 +83,7 @@ export function ExperienceEditorial() {
                                           href={job.link} 
                                           target="_blank"
                                           rel="noopener noreferrer"
-                                          className="text-white/50 md:text-white/40 hover:text-sky-400 active:text-sky-400 transition-colors duration-300 mt-1"
+                                          className="text-white/50 md:text-white/40 hover:text-sky-400 active:text-sky-400 transition-colors duration-500 mt-1"
                                         >
                                           <ArrowUpRight className="w-4 h-4 md:w-5 md:h-5" />
                                         </a>
