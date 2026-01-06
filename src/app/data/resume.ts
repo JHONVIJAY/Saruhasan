@@ -18,21 +18,23 @@ export const resumeData = {
       period: "Nov 2025 - Present",
       location: "Chennai",
       description: "Spearheading the digital transformation of a premier ceramic brand. Built and deployed the official platform, handling full-stack development and brand aesthetics.",
-      link: "https://anujtiles.vercel.app/"
+      link: "https://www.anujtiles.com/index"
     },
     {
       company: "BBIQ Technologies",
       role: "Web Developer",
       period: "Jan 2025 - Sep 2025",
       location: "Chennai",
-      description: "Developed enterprise solutions with complex mapping integrations. optimized user navigation flows and managed plugin architectures for scalable applications."
+      description: "Developed enterprise solutions with complex mapping integrations. optimized user navigation flows and managed plugin architectures for scalable applications.",
+      link: "https://bbiqtechnologies.com"
     },
     {
       company: "MercuryMinds",
       role: "Frontend Developer",
       period: "Mar 2024 - Dec 2024",
       location: "Chennai",
-      description: "Designed responsive interfaces and optimized user workflows for diverse content management systems."
+      description: "Designed responsive interfaces and optimized user workflows for diverse content management systems.",
+      link: "https://www.mercuryminds.com/"
     }
   ],
   education: [
@@ -56,7 +58,7 @@ export const resumeData = {
       period: "2025",
       description: "Official digital presence for a ceramic enterprise. Features a custom product catalog, immersive gallery, and optimized lead generation flow.",
       tech: ["Next.js", "TypeScript", "Tailwind CSS"],
-      link: "https://anujtiles.vercel.app/"
+      link: "https://www.anujtiles.com/index"
     },
     {
       title: "Tn React",
