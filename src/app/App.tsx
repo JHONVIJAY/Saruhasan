@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { NavbarMix } from "./components/NavbarMix";
 import { Grain } from "./components/Grain";
 import { CustomCursor } from "./components/ui/CustomCursor";
@@ -19,13 +19,15 @@ function ScrollToTop() {
     }
 
     if (hash) {
-      // If there is a hash, scroll to it
-      const element = document.querySelector(hash);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
+      // If there is a hash, scroll to it with a slight delay to ensure content is rendered
+      setTimeout(() => {
+        const element = document.querySelector(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
     } else {
-      // If no hash (new page), scroll to top
+      // If no hash (new page), scroll to top immediately
       window.scrollTo(0, 0);
     }
   }, [pathname, hash]);
@@ -59,6 +61,8 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/void" element={<VoidPage />} />
+            {/* Catch-all route for 404s */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
           
           <Footer />
