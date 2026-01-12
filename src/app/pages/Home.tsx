@@ -9,8 +9,8 @@ export function Home() {
     <main className="relative z-10 w-full pb-0">
       <HeroSolid />
       <Marquee />
-      <WorkG rid />
-      <Experien ceEditorial />
+      <WorkGrid />
+      <ExperienceEditorial />
       <AboutSpecs />
     </main>
   );
