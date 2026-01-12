@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { PREMIUM_SLIDESHOW_MOVIES, TOTAL_FILMS_WATCHED, Movie } from "../lib/movies";
 import { Film, Sparkles, Play, Shuffle, RefreshCw } from "lucide-react";
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, FreeMode } from 'swiper/modules';
+import { Autoplay, FreeMode, EffectCoverflow } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
 import { useMoviePosters, MovieWithPoster, fetchSingleMoviePoster } from '../lib/useMoviePosters';
 import { discoverRandomMovies, getTrendingMovies, getPosterUrl, getBackdropUrl, getGenreName, getMovieCredits, findDirector, TMDBMovie } from '../lib/tmdb';
@@ -13,32 +13,25 @@ import { YouTubeDownloader } from './YouTubeDownloader';
 
 // Import Swiper styles
 import 'swiper/css';
+import 'swiper/css/effect-coverflow';
 
 // Movie poster card component
-function MoviePoster({ movie, index }: { movie: Movie; index: number }) {
+function MoviePoster({ movie, index, disableHoverEffect = false }: { movie: Movie; index: number; disableHoverEffect?: boolean }) {
   const [hasError, setHasError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ 
-        delay: index * 0.05, 
-        duration: 0.6, 
-        ease: [0.25, 0.1, 0.25, 1] 
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+    <div
+      onMouseEnter={() => !disableHoverEffect && setIsHovered(true)}
+      onMouseLeave={() => !disableHoverEffect && setIsHovered(false)}
       className="w-full group/card"
     >
       {/* Main Card Container with Enhanced Styling */}
       <motion.div
         animate={{
-          scale: isHovered ? 1.05 : 1,
-          y: isHovered ? -12 : 0,
+          scale: !disableHoverEffect && isHovered ? 1.05 : 1,
+          y: !disableHoverEffect && isHovered ? -12 : 0,
         }}
         transition={{ 
           duration: 0.4,
@@ -46,7 +39,7 @@ function MoviePoster({ movie, index }: { movie: Movie; index: number }) {
         }}
         className="relative aspect-[2/3] rounded-2xl overflow-hidden cursor-pointer isolate"
         style={{
-          boxShadow: isHovered 
+          boxShadow: !disableHoverEffect && isHovered 
             ? '0 32px 64px -12px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.1)' 
             : '0 4px 16px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.03)'
         }}
@@ -90,26 +83,27 @@ function MoviePoster({ movie, index }: { movie: Movie; index: number }) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none" />
         </div>
 
-        {/* Mobile - Premium Bottom Overlay */}
-        <div className="absolute inset-x-0 bottom-0 p-4 md:hidden">
-          <div className="relative p-4 rounded-xl bg-gradient-to-t from-black/95 via-black/90 to-transparent backdrop-blur-md border border-white/10">
-            <h4 className="text-sm font-semibold text-white mb-2 leading-tight line-clamp-2 tracking-tight">
+        {/* Mobile - Minimalist Gradient Overlay */}
+        <div className="absolute inset-0 flex flex-col justify-end p-4 md:hidden">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+          <div className="relative z-10">
+            <h4 className="text-white font-bold text-sm mb-1 leading-snug drop-shadow-md">
               {movie.title}
             </h4>
-            <div className="flex items-center gap-2 text-xs text-white/50">
-              <span className="font-medium">{movie.year}</span>
-              <span className="w-1 h-1 rounded-full bg-sky-500/50" />
-              <span className="line-clamp-1 font-light">{movie.director}</span>
+            <div className="flex items-center gap-1.5 text-xs text-white/80 font-medium drop-shadow-sm">
+              <span>{movie.year}</span>
+              <span className="text-sky-400">•</span>
+              <span className="truncate">{movie.director}</span>
             </div>
           </div>
         </div>
 
-        {/* Desktop - Hover Overlay with Premium Glass Effect */}
+        {/* Desktop - Hover Overlay */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: isHovered ? 1 : 0 }}
           transition={{ duration: 0.3 }}
-          className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/40 backdrop-blur-sm hidden md:block"
+          className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent hidden md:block"
         />
 
         {/* Desktop - Premium Content on Hover */}
@@ -131,10 +125,9 @@ function MoviePoster({ movie, index }: { movie: Movie; index: number }) {
             <motion.div 
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className="relative inline-flex items-center justify-center w-12 h-12 rounded-full bg-white cursor-pointer group/play shadow-lg shadow-white/20"
+              className="relative inline-flex items-center justify-center w-12 h-12 rounded-full bg-white cursor-pointer group/play shadow-lg shadow-white/10 hover:shadow-white/20 transition-shadow"
             >
-              <div className="absolute inset-0 rounded-full bg-white opacity-50 blur-xl group-hover/play:opacity-75 transition-opacity" />
-              <Play className="relative w-5 h-5 text-black fill-black ml-0.5" />
+              <Play className="w-5 h-5 text-black fill-black ml-0.5" />
             </motion.div>
           </div>
 
@@ -185,7 +178,7 @@ function MoviePoster({ movie, index }: { movie: Movie; index: number }) {
           className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none hidden md:block"
         />
       </motion.div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -625,56 +618,66 @@ export function Void() {
             {/* Ambient Glow Behind Slideshow */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-sky-500/5 to-transparent blur-3xl" />
             
-            {/* Left Edge Fade */}
-            <div className="absolute left-0 top-0 bottom-0 w-32 md:w-48 bg-gradient-to-r from-black via-black/80 to-transparent z-10 pointer-events-none" />
-            
-            {/* Right Edge Fade */}
-            <div className="absolute right-0 top-0 bottom-0 w-32 md:w-48 bg-gradient-to-l from-black via-black/80 to-transparent z-10 pointer-events-none" />
+
             
             {/* Slideshow Container */}
-            <div className="px-6 md:px-12 py-4">
-              <Swiper
-                spaceBetween={30}
-                slidesPerView={'auto'}
-                loop={hasEnoughSlides}
-                speed={3500}
-                autoplay={{
-                  delay: 0,
-                  disableOnInteraction: false,
-                  pauseOnMouseEnter: true,
-                }}
-                freeMode={true}
-                breakpoints={{
-                  320: {
-                    slidesPerView: 2,
-                    spaceBetween: 15,
-                  },
-                  640: {
-                    slidesPerView: 3,
-                    spaceBetween: 20,
-                  },
-                  1024: {
-                    slidesPerView: 4,
-                    spaceBetween: 25,
-                  },
-                  1280: {
-                    slidesPerView: 5,
-                    spaceBetween: 30,
-                  },
-                  1536: {
-                    slidesPerView: 6,
-                    spaceBetween: 30,
-                  },
-                }}
-                modules={[Autoplay, FreeMode]}
-                className="!pb-12"
-              >
-                {displayMovies.map((movie, index) => (
-                  <SwiperSlide key={`${movie.id}-${index}`} style={{ width: 'auto' }}>
-                    <MoviePoster movie={movie} index={index} />
-                  </SwiperSlide>
-                ))}
-              </Swiper>
+            <div className="md:px-12 py-4">
+              {/* Mobile Poster Slider (Coverflow) */}
+              <div className="md:hidden w-full">
+                <Swiper
+                  effect={'coverflow'}
+                  grabCursor={true}
+                  centeredSlides={true}
+                  slidesPerView={'auto'}
+                  loop={hasEnoughSlides}
+                  speed={800}
+                  autoplay={{
+                    delay: 2000,
+                    disableOnInteraction: false,
+                  }}
+                  coverflowEffect={{
+                    rotate: 0,
+                    stretch: 0,
+                    depth: 100,
+                    modifier: 2.5,
+                    slideShadows: false,
+                  }}
+                  modules={[EffectCoverflow, Autoplay]}
+                  className="w-full !pb-8"
+                >
+                  {displayMovies.map((movie, index) => (
+                    <SwiperSlide key={`mobile-${movie.id}-${index}`} style={{ width: '200px' }}>
+                      <div className="px-2">
+                        <MoviePoster movie={movie} index={index} disableHoverEffect={true} />
+                      </div>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
+
+              {/* Desktop Ticker (FreeMode) */}
+              <div className="hidden md:block">
+                <Swiper
+                  spaceBetween={30}
+                  slidesPerView={'auto'}
+                  loop={hasEnoughSlides}
+                  speed={3500}
+                  autoplay={{
+                    delay: 0,
+                    disableOnInteraction: false,
+                    pauseOnMouseEnter: true,
+                  }}
+                  freeMode={true}
+                  modules={[Autoplay, FreeMode]}
+                  className="!pb-12"
+                >
+                  {displayMovies.map((movie, index) => (
+                    <SwiperSlide key={`desktop-${movie.id}-${index}`} style={{ width: '220px' }}>
+                      <MoviePoster movie={movie} index={index} />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
             </div>
             
             {/* Bottom Reflection Effect */}
