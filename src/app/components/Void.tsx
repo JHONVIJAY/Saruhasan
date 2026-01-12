@@ -12,6 +12,8 @@ import { YouTubeDownloader } from './YouTubeDownloader';
 
 // Import Swiper styles
 import 'swiper/css';
+import 'swiper/css/free-mode';
+import 'swiper/css/pagination';
 
 // Movie poster card component
 function MoviePoster({ movie, index, disableHoverEffect = false }: { movie: Movie; index: number; disableHoverEffect?: boolean }) {
@@ -626,17 +628,32 @@ export function Void() {
                     slidesPerView={'auto'}
                     spaceBetween={16}
                     loop={hasEnoughSlides}
-                    speed={600}
-                    autoplay={{
-                      delay: 3000,
-                      disableOnInteraction: false,
+                    speed={400}
+                    freeMode={{
+                      enabled: true,
+                      momentum: true,
+                      momentumRatio: 0.5,
+                      momentumVelocityRatio: 0.5,
+                      sticky: false,
                     }}
-                    modules={[Autoplay]}
-                    className="w-full !pb-8"
+                    resistance={true}
+                    resistanceRatio={0.85}
+                    threshold={5}
+                    touchRatio={1.2}
+                    touchAngle={45}
+                    longSwipesRatio={0.3}
+                    slideToClickedSlide={true}
+                    autoplay={{
+                      delay: 4000,
+                      disableOnInteraction: true,
+                      pauseOnMouseEnter: true,
+                    }}
+                    modules={[Autoplay, FreeMode]}
+                    className="w-full !pb-8 mobile-poster-swiper"
                   >
                     {displayMovies.map((movie, index) => (
-                      <SwiperSlide key={`mobile-${movie.id}-${index}`} style={{ width: '240px' }}>
-                        <div className="px-2">
+                      <SwiperSlide key={`mobile-${movie.id}-${index}`} style={{ width: '260px' }}>
+                        <div className="px-2 transition-transform duration-300 ease-out">
                           <MoviePoster movie={movie} index={index} disableHoverEffect={true} />
                         </div>
                       </SwiperSlide>
