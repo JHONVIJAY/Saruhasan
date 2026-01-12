@@ -1,21 +1,15 @@
-import { useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { resumeData } from "../data/resume";
 
-const projectImages = [
-  "https://images.unsplash.com/photo-1649518057077-9ea3d24d66ec?q=80&w=1080&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1686476020928-1834ccef445b?q=80&w=1080&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1762280040702-dbe2f4869712?q=80&w=1080&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1765392412355-0913f7c91c67?q=80&w=1080&auto=format&fit=crop"
-];
-
-const titleVariants = {
-  hidden: { y: "100%" },
+const textVariants = {
+  hidden: { opacity: 0, y: 50 },
   visible: (i: number) => ({
+    opacity: 1,
     y: 0,
     transition: {
-      delay: i * 0.02,
+      delay: i * 0.03,
       duration: 0.8,
       ease: [0.22, 1, 0.36, 1],
     },
@@ -24,269 +18,143 @@ const titleVariants = {
 
 function SplitText({ text, className }: { text: string, className?: string }) {
   return (
-    <div className={`${className} overflow-hidden flex flex-wrap`}>
+    <motion.h2 
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+      className={`${className} flex flex-wrap`}
+    >
       {text.split("").map((char, i) => (
-        <span key={`${char}-${i}`} className="inline-block overflow-hidden">
-          <motion.span
+         <motion.span
+            key={`${char}-${i}`}
             custom={i}
-            variants={titleVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-10%" }}
+            variants={textVariants}
             className="inline-block"
-          >
-            {char === " " ? "\u00A0" : char}
-          </motion.span>
-        </span>
+         >
+           {char === " " ? "\u00A0" : char}
+         </motion.span>
       ))}
-    </div>
+    </motion.h2>
   );
 }
 
-function ProjectItem({ 
-    project, 
-    index, 
-    setHoveredIndex, 
-    hoveredIndex 
-}: { 
-    project: any, 
-    index: number, 
-    setHoveredIndex: (i: number | null) => void,
-    hoveredIndex: number | null 
-}) {
-  const isHovered = hoveredIndex === index;
-  // Disable dimming on mobile by checking if we are in a hover state
-  const isDimmed = hoveredIndex !== null && !isHovered;
-
+function ProjectItem({ project, index }: { project: any, index: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 50 }}
+      ref={ref} 
+      initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-10%" }}
+      viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
-      className={`group relative w-full border-t border-white/10 transition-all duration-500 ${isDimmed ? "lg:opacity-30 lg:blur-[2px]" : "opacity-100"}`}
-      onMouseEnter={() => setHoveredIndex(index)}
-      onMouseLeave={() => setHoveredIndex(null)}
-      id={`project-${index}`}
+      className="group relative pb-16 md:pb-24 border-b border-white/5 last:border-0 last:pb-0"
     >
-      <a href={project.link} target="_blank" rel="noreferrer" className="block py-10 md:py-16 lg:py-20" aria-label={`View project: ${project.title}`}>
-          <div className="grid grid-cols-12 gap-y-6 md:gap-4 items-center">
-             
-             {/* Mobile: Image Preview */}
-             <div className="col-span-12 md:hidden mb-2">
-                <div className="aspect-video w-full overflow-hidden rounded-sm relative">
-                   <img 
-                      src={projectImages[index % projectImages.length]} 
-                      alt={project.title}
-                      className="w-full h-full object-cover opacity-80"
-                   />
-                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                   <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-md border border-white/10 px-3 py-1 rounded-full">
-                      <span className="font-mono text-[10px] uppercase text-white/80">0{index + 1}</span>
-                   </div>
-                </div>
-             </div>
+      <div className="flex flex-col gap-8 md:gap-10">
+         
+         {/* Header with Index and Period */}
+         <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-4 md:gap-6">
+               <span className="font-mono text-5xl md:text-6xl lg:text-7xl font-black text-white/10 md:text-white/5 md:group-hover:text-white/10 transition-colors duration-700">
+                 0{index + 1}
+               </span>
+               <div className="flex flex-col gap-1">
+                  <div className="overflow-hidden">
+                    <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold text-sky-400/90 md:text-white md:group-hover:text-sky-400 transition-colors duration-500 uppercase tracking-tight">
+                      {project.title}
+                    </h3>
+                  </div>
+                  <span className="font-mono text-xs md:text-sm text-white/50 md:text-white/30 uppercase tracking-widest">
+                    {project.period}
+                  </span>
+               </div>
+            </div>
+         </div>
 
-             {/* Index - Desktop */}
-             <div className="hidden md:block col-span-1 overflow-hidden">
-                <span className={`block font-mono text-xs text-white/40 transition-transform duration-500 ${isHovered ? "translate-x-2 text-sky-400" : ""}`}>
-                   (0{index + 1})
-                </span>
-             </div>
+         {/* Description */}
+         <p className="text-white/80 md:text-white/50 md:group-hover:text-white/70 text-base md:text-lg lg:text-xl leading-relaxed max-w-3xl pl-0 md:pl-24 transition-colors duration-500">
+           {project.description}
+         </p>
 
-             {/* Title */}
-             <div className="col-span-12 md:col-span-6 lg:col-span-7 overflow-hidden relative">
-                <h3 className={`text-2xl md:text-5xl lg:text-6xl xl:text-7xl font-black uppercase tracking-tight break-words transition-all duration-500 py-4 leading-none ${isHovered ? "lg:text-transparent lg:bg-clip-text lg:bg-gradient-to-r lg:from-sky-300 lg:via-sky-100 lg:to-white translate-x-2" : "text-white"}`}>
-                    {project.title}
-                </h3>
-                {/* Reveal arrow on hover (Desktop) */}
-                <motion.div 
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: isHovered ? 0 : -20, opacity: isHovered ? 1 : 0 }}
-                    transition={{ duration: 0.4 }}
-                    className="hidden lg:flex absolute -left-8 top-1/2 -translate-y-1/2 items-center text-sky-400"
-                >
-                    <ArrowUpRight size={24} />
-                </motion.div>
-             </div>
+         {/* Tech Stack & Link */}
+         <div className="flex flex-col md:flex-row gap-6 md:gap-8 justify-between md:items-center pl-0 md:pl-24">
+            <div className="flex flex-wrap gap-2">
+               {project.tech.map((t: string, i: number) => (
+                 <span key={i} className="px-4 py-2 text-xs font-mono text-white/50 md:text-white/40 border border-white/15 md:border-white/10 md:group-hover:border-white/20 md:group-hover:text-white/60 transition-all duration-500 uppercase tracking-wider">
+                   {t}
+                 </span>
+               ))}
+            </div>
+            <a 
+               href={project.link} 
+               target="_blank"
+               rel="noopener noreferrer"
+               className="inline-flex items-center gap-2 text-white/60 hover:text-sky-400 active:text-sky-400 transition-colors duration-500 pb-1 border-b border-white/10 hover:border-sky-400 active:border-sky-400 w-fit group/link"
+            >
+               <span className="font-mono text-xs md:text-sm uppercase tracking-widest">View Project</span>
+               <ArrowUpRight className="w-4 h-4 group-hover/link:translate-x-1 group-hover/link:-translate-y-1 transition-transform duration-700" />
+            </a>
+         </div>
 
-             {/* Tech Stack / Category */}
-             <div className="col-span-12 md:col-span-5 lg:col-span-4 flex justify-between md:justify-end items-center">
-                <div className="flex flex-wrap gap-2 md:justify-end">
-                    {project.tech.slice(0, 3).map((t: string, i: number) => (
-                        <span key={i} className={`px-3 py-1 text-[10px] font-mono uppercase tracking-wider border rounded-full transition-all duration-500 ${isHovered ? "lg:border-sky-500/30 lg:text-sky-300 lg:bg-sky-500/10" : "border-white/10 text-white/40"}`}>
-                            {t}
-                        </span>
-                    ))}
-                </div>
-                
-                {/* Mobile Link Arrow */}
-                <div className="md:hidden h-8 w-8 rounded-full border border-white/20 flex items-center justify-center text-white/60">
-                   <ArrowUpRight size={14} />
-                </div>
-             </div>
-          </div>
-      </a>
+         {/* Decorative Line - Desktop only */}
+         <div className="hidden md:block h-px w-0 group-hover:w-full bg-gradient-to-r from-sky-400/0 via-sky-400/20 to-sky-400/0 transition-all duration-1500 ease-out" />
+
+      </div>
     </motion.div>
   );
 }
 
 export function WorkGrid() {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  
-  const containerRef = useRef<HTMLDivElement>(null);
-
   return (
-    <section id="works" ref={containerRef} className="relative bg-[#050505] text-white py-20 md:py-40 z-20 scroll-mt-24">
-      
-      <div className="container mx-auto px-4 md:px-8 lg:px-12">
-        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24">
-          
-          {/* Mobile Header */}
-          <div className="lg:hidden mb-8">
-             <SplitText 
-                 text="THE" 
-                 className="text-[13vw] font-black uppercase tracking-tighter leading-[0.85] text-white" 
-             />
-             <SplitText 
-                 text="ARCHIVE" 
-                 className="text-[13vw] font-black uppercase tracking-tighter leading-[0.85] text-white" 
-             />
-             <div className="w-16 h-1 bg-sky-500 mt-6 mb-8" />
-             <p className="text-white/60 text-lg leading-relaxed font-light">
-                A curated selection of engineering challenges and digital experiences. Focusing on stability, performance, and monolithic design.
-             </p>
-          </div>
+    <section id="works" className="bg-[#050505] text-white py-20 md:py-32 lg:py-40 relative z-10">
+      <div className="container mx-auto px-4 md:px-8">
+        
+        <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 relative">
+           
+           {/* Left Sidebar (Sticky) */}
+           <div className="lg:w-1/3">
+              <div className="lg:sticky lg:top-32">
+                 <div className="flex items-center gap-4 mb-6 md:mb-8">
+                    <div className="h-px w-8 md:w-12 bg-white/20"></div>
+                    <span className="font-mono text-xs md:text-sm text-white/40 uppercase tracking-widest">Selected Works</span>
+                 </div>
+                 
+                 <div className="mb-6 md:mb-8">
+                    <SplitText 
+                       text="THE" 
+                       className="text-[12vw] md:text-[8vw] lg:text-8xl font-black uppercase tracking-tighter leading-[0.85] text-white" 
+                    />
+                    <SplitText 
+                       text="ARCHIVE" 
+                       className="text-[12vw] md:text-[8vw] lg:text-8xl font-black uppercase tracking-tighter leading-[0.85] text-white" 
+                    />
+                 </div>
+                 
+                 <p className="text-white/40 text-base md:text-lg max-w-sm leading-relaxed mb-8 md:mb-12">
+                    A curated selection of engineering challenges and digital experiences. 
+                    Focusing on stability, performance, and monolithic design.
+                 </p>
 
-          {/* Sticky Sidebar / Preview Area (Desktop Only) */}
-          <div className="hidden lg:block lg:w-5/12 relative">
-             <div className="sticky top-32 h-[calc(100vh-160px)] min-h-[500px] max-h-[800px] w-full flex flex-col justify-between">
-                
-                <div className="relative w-full h-full">
-                    <AnimatePresence mode="wait">
-                        {hoveredIndex === null ? (
-                            <motion.div 
-                                key="default"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.5 }}
-                                className="absolute inset-0 flex flex-col justify-between"
-                            >
-                                <div className="relative">
-                                    <div className="flex items-center gap-4 mb-8">
-                                        <div className="w-2 h-2 bg-sky-500" />
-                                        <span className="font-mono text-sm uppercase tracking-[0.2em] text-white/50">
-                                            Selected Works
-                                        </span>
-                                    </div>
-                                    <SplitText 
-                                        text="THE" 
-                                        className="text-6xl xl:text-8xl font-black uppercase tracking-tighter leading-[0.85] text-white" 
-                                    />
-                                    <SplitText 
-                                        text="ARCHIVE" 
-                                        className="text-6xl xl:text-8xl font-black uppercase tracking-tighter leading-[0.85] text-white" 
-                                    />
-                                    
-                                    {/* Decorative Circle */}
-                                    <div className="absolute top-0 right-0 w-6 h-6 rounded-full border border-white/80" />
-                                </div>
-                                
-                                <div className="max-w-sm">
-                                    <p className="text-white/50 text-lg leading-relaxed font-light mb-12">
-                                        A curated selection of engineering challenges and digital experiences. Focusing on stability, performance, and monolithic design.
-                                    </p>
-                                    
-                                    {/* Visual Project Index */}
-                                    <div className="grid grid-cols-2 gap-x-8 gap-y-4 border-t border-white/10 pt-8">
-                                        {resumeData.projects.map((p, i) => (
-                                            <div 
-                                                key={i} 
-                                                className="flex items-center gap-3 opacity-50 hover:opacity-100 cursor-pointer transition-opacity duration-300"
-                                                onMouseEnter={() => setHoveredIndex(i)}
-                                                onClick={() => document.getElementById(`project-${i}`)?.scrollIntoView({ behavior: 'smooth' })}
-                                            >
-                                                <span className="font-mono text-xs text-sky-500">0{i + 1}</span>
-                                                <span className="font-bold text-xs text-white uppercase tracking-wider truncate">
-                                                    {p.title}
-                                                </span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ) : (
-                            <motion.div
-                                key="preview"
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.98 }}
-                                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                                className="absolute inset-0 w-full h-full rounded-sm overflow-hidden bg-[#111]"
-                            >
-                                <img 
-                                    src={projectImages[hoveredIndex % projectImages.length]} 
-                                    alt="Project Preview" 
-                                    className="w-full h-full object-cover opacity-80"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                                
-                                <div className="absolute bottom-0 left-0 p-8 w-full">
-                                    <motion.div 
-                                        initial={{ y: 20, opacity: 0 }}
-                                        animate={{ y: 0, opacity: 1 }}
-                                        transition={{ delay: 0.1 }}
-                                        className="flex justify-between items-end"
-                                    >
-                                        <div>
-                                            <span className="font-mono text-sky-400 text-xs tracking-widest uppercase mb-2 block">
-                                                {resumeData.projects[hoveredIndex].period}
-                                            </span>
-                                            <h4 className="text-3xl font-bold text-white uppercase">
-                                                {resumeData.projects[hoveredIndex].title}
-                                            </h4>
-                                        </div>
-                                        <div className="h-10 w-10 rounded-full bg-white text-black flex items-center justify-center">
-                                            <ArrowUpRight size={20} />
-                                        </div>
-                                    </motion.div>
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
+                 <div className="hidden lg:flex flex-col gap-2">
+                    {resumeData.projects.map((p, i) => (
+                       <div key={i} className="flex items-center gap-4 text-white/20 hover:text-white transition-colors duration-500 cursor-default">
+                          <span className="font-mono text-xs">0{i + 1}</span>
+                          <span className="text-sm uppercase tracking-wider">{p.title}</span>
+                       </div>
+                    ))}
+                 </div>
+              </div>
+           </div>
 
-             </div>
-          </div>
-
-          {/* Project List */}
-          <div className="lg:w-7/12 lg:pt-12">
-             <div className="flex flex-col">
-                {resumeData.projects.map((project, index) => (
-                   <ProjectItem 
-                        key={index} 
-                        project={project} 
-                        index={index} 
-                        setHoveredIndex={setHoveredIndex}
-                        hoveredIndex={hoveredIndex}
-                   />
-                ))}
-             </div>
-             
-             <div className="lg:hidden mt-12 flex justify-center">
-                <a 
-                    href={resumeData.social.github} 
-                    className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-white/5 border border-white/10 rounded-full overflow-hidden transition-all duration-300 active:scale-95"
-                >
-                    <span className="font-mono text-xs text-white uppercase tracking-widest relative z-10 group-hover:text-black transition-colors">View Full Archive</span>
-                    <ArrowUpRight className="w-4 h-4 text-white relative z-10 group-hover:text-black transition-colors" />
-                    <div className="absolute inset-0 bg-white translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-                </a>
-             </div>
-          </div>
+           {/* Right Content (Scrollable) */}
+           <div className="lg:w-2/3 flex flex-col gap-16 md:gap-24 relative">
+              {resumeData.projects.map((project, index) => (
+                 <ProjectItem key={index} project={project} index={index} />
+              ))}
+           </div>
 
         </div>
+
       </div>
     </section>
   );

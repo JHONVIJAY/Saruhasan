@@ -25,7 +25,7 @@ export default function App() {
 
   return (
     <ReactLenis root options={lenisOptions}>
-      <div className="relative min-h-screen bg-[#050505] text-[#EAEAEA] font-sans selection:bg-[#FFFFFF] selection:text-black md:cursor-none">
+      <div className="relative min-h-screen bg-[#050505] text-[#EAEAEA] font-sans selection:bg-[#FFFFFF] selection:text-black cursor-none">
         <Preloader />
         <CustomCursor />
         <Grain />
