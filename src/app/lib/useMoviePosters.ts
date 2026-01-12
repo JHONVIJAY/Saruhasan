@@ -1,5 +1,9 @@
-import { useState, useEffect } from 'react';
-import { fetchMoviePoster, EnhancedMovie, generateMovieId } from './movies-enhanced';
+import { useState, useEffect } from "react";
+import {
+  fetchMoviePoster,
+  EnhancedMovie,
+  generateMovieId,
+} from "./movies-enhanced";
 
 export interface MovieWithPoster extends EnhancedMovie {
   isLoading?: boolean;
@@ -8,8 +12,21 @@ export interface MovieWithPoster extends EnhancedMovie {
 /**
  * Custom hook to fetch and cache TMDB posters for movies
  */
-export function useMoviePosters(movies: Omit<EnhancedMovie, 'poster' | 'backdrop'>[]) {
-  const [moviesWithPosters, setMoviesWithPosters] = useState<MovieWithPoster[]>([]);
+export function useMoviePosters(
+  movies: Omit<EnhancedMovie, "poster" | "backdrop">[]
+) {
+  // Initialize with placeholders to prevent layout shifts
+  const [moviesWithPosters, setMoviesWithPosters] = useState<MovieWithPoster[]>(
+    () =>
+      movies.map((m) => ({
+        ...m,
+        id: m.id || generateMovieId(m.title, m.year),
+        poster: `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=500&h=750&fit=crop`,
+        backdrop: `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=1280&h=720&fit=crop`,
+        isLoading: true,
+      }))
+  );
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,7 +35,9 @@ export function useMoviePosters(movies: Omit<EnhancedMovie, 'poster' | 'backdrop
 
     const fetchPosters = async () => {
       setIsLoading(true);
-      const results: MovieWithPoster[] = [];
+
+      // Create a local mutable copy of the current state (which has placeholders)
+      const currentMovies = [...moviesWithPosters];
 
       // Process in batches to avoid overwhelming the API
       const batchSize = 10;
@@ -37,10 +56,14 @@ export function useMoviePosters(movies: Omit<EnhancedMovie, 'poster' | 'backdrop
               return {
                 ...movie,
                 id: movie.id || generateMovieId(movie.title, movie.year),
-                poster: poster || `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=500&h=750&fit=crop`,
-                backdrop: backdrop || `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=1280&h=720&fit=crop`,
+                poster:
+                  poster ||
+                  `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=500&h=750&fit=crop`,
+                backdrop:
+                  backdrop ||
+                  `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=1280&h=720&fit=crop`,
                 tmdbId,
-                isLoading: false
+                isLoading: false,
               };
             } catch (error) {
               console.error(`Error fetching poster for ${movie.title}:`, error);
@@ -49,22 +72,27 @@ export function useMoviePosters(movies: Omit<EnhancedMovie, 'poster' | 'backdrop
                 id: movie.id || generateMovieId(movie.title, movie.year),
                 poster: `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=500&h=750&fit=crop`,
                 backdrop: `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=1280&h=720&fit=crop`,
-                isLoading: false
+                isLoading: false,
               };
             }
           })
         );
 
-        results.push(...batchResults);
-        
-        // Update state progressively for better UX
+        // Update the local copy with new results
+        batchResults.forEach((result, index) => {
+          if (i + index < currentMovies.length) {
+            currentMovies[i + index] = result;
+          }
+        });
+
+        // Update state progressively
         if (isMounted) {
-          setMoviesWithPosters([...results]);
+          setMoviesWithPosters([...currentMovies]);
         }
 
         // Rate limiting: wait 250ms between batches
         if (i + batchSize < movies.length) {
-          await new Promise(resolve => setTimeout(resolve, 250));
+          await new Promise((resolve) => setTimeout(resolve, 250));
         }
       }
 
@@ -73,7 +101,7 @@ export function useMoviePosters(movies: Omit<EnhancedMovie, 'poster' | 'backdrop
       }
     };
 
-    fetchPosters().catch(err => {
+    fetchPosters().catch((err) => {
       if (isMounted) {
         setError(err.message);
         setIsLoading(false);
@@ -106,12 +134,16 @@ export async function fetchSingleMoviePoster(
       year,
       rating: 0,
       genre,
-      leadActor: '',
-      director: '',
-      poster: poster || `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=500&h=750&fit=crop`,
-      backdrop: backdrop || `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=1280&h=720&fit=crop`,
+      leadActor: "",
+      director: "",
+      poster:
+        poster ||
+        `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=500&h=750&fit=crop`,
+      backdrop:
+        backdrop ||
+        `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=1280&h=720&fit=crop`,
       tmdbId,
-      isLoading: false
+      isLoading: false,
     };
   } catch (error) {
     return {
@@ -120,11 +152,11 @@ export async function fetchSingleMoviePoster(
       year,
       rating: 0,
       genre,
-      leadActor: '',
-      director: '',
+      leadActor: "",
+      director: "",
       poster: `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=500&h=750&fit=crop`,
       backdrop: `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=1280&h=720&fit=crop`,
-      isLoading: false
+      isLoading: false,
     };
   }
 }

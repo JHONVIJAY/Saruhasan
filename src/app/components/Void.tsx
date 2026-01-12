@@ -444,10 +444,12 @@ function MovieSuggesterCard({ movies }: { movies: Movie[] }) {
 }
 
 export function Void() {
+  const [mounted, setMounted] = useState(false);
   // Optimization: Track mobile state to reduce DOM nodes
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const checkMobile = () => setIsMobile(window.matchMedia('(max-width: 768px)').matches);
     checkMobile();
     
@@ -635,9 +637,15 @@ export function Void() {
 
             
             {/* Slideshow Container */}
-            <div className="md:px-12 py-4">
-              {/* Mobile Poster Slider (Coverflow) */}
-              {isMobile && (
+            <div className="md:px-12 py-4 min-h-[400px]">
+              {!mounted ? (
+                <div className="w-full h-[400px] flex items-center justify-center">
+                   <div className="w-8 h-8 border-2 border-sky-500/30 border-t-sky-500 rounded-full animate-spin" />
+                </div>
+              ) : (
+                <>
+                  {/* Mobile Poster Slider (Coverflow) */}
+                  {isMobile && (
                 <div className="md:hidden w-full">
                   <Swiper
                     effect={'coverflow'}
@@ -695,6 +703,8 @@ export function Void() {
                     ))}
                   </Swiper>
                 </div>
+              )}
+                </>
               )}
             </div>
             

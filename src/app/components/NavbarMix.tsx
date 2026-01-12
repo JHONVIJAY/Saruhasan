@@ -169,7 +169,7 @@ export function NavbarMix() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-[90] bg-[#050505]/98 backdrop-blur-lg md:hidden overflow-hidden flex flex-col"
+            className="fixed inset-0 z-[90] bg-[#050505]/98 backdrop-blur-lg md:hidden overflow-y-auto flex flex-col"
             onClick={() => setMobileMenuOpen(false)}
         >
             {/* Subtle gradient overlay */}
@@ -183,7 +183,7 @@ export function NavbarMix() {
                 }} />
             </div>
 
-            <div className="flex-1 flex flex-col justify-center px-8 py-8">
+            <div className="flex-1 flex flex-col justify-center px-6 py-6">
                 {/* Animated menu items */}
                 {[
                     { name: 'Index', href: '/#index' },
@@ -203,7 +203,7 @@ export function NavbarMix() {
                             duration: 0.5,
                             ease: [0.22, 1, 0.36, 1]
                         }}
-                        className="pb-6"
+                        className="pb-4"
                     >
                         <Link 
                             to={item.href}
@@ -211,12 +211,12 @@ export function NavbarMix() {
                             className="group flex items-center gap-4 py-2"
                         >
                             <span className="font-mono text-xs text-sky-500/50 group-hover:text-sky-400 transition-colors">0{i + 1}</span>
-                            <span className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-white/40 group-hover:text-white transition-all duration-300">
+                            <span className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tighter text-white/40 group-hover:text-white transition-all duration-300">
                                 {item.name}
                             </span>
                         </Link>
                         {i < array.length - 1 && (
-                            <div className="w-full h-[1px] bg-gradient-to-r from-white/10 to-transparent mt-6" />
+                            <div className="w-full h-[1px] bg-gradient-to-r from-white/10 to-transparent mt-4" />
                         )}
                     </motion.div>
                 ))}
@@ -228,9 +228,9 @@ export function NavbarMix() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
-                className="w-full border-t border-white/10 bg-[#050505]"
+                className="w-full border-t border-white/10 bg-[#050505] shrink-0"
             >
-                <div className="flex flex-col gap-6 p-6 sm:flex-row sm:items-end sm:justify-between sm:p-8">
+                <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-end sm:justify-between sm:p-8">
                     <div className="flex flex-col gap-3">
                         <span className="font-mono text-[10px] uppercase tracking-widest text-white/30">Connect</span>
                         <div className="flex gap-5">
