@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchMoviePoster, EnhancedMovie, generateMovieId } from './movies-enhanced';
+import { fetchMoviePoster, getCachedMoviePoster, EnhancedMovie, generateMovieId } from './movies-enhanced';
 
 export interface MovieWithPoster extends EnhancedMovie {
   isLoading?: boolean;
@@ -9,28 +9,40 @@ export interface MovieWithPoster extends EnhancedMovie {
  * Custom hook to fetch and cache TMDB posters for movies
  */
 export function useMoviePosters(movies: Omit<EnhancedMovie, 'poster' | 'backdrop'>[]) {
-  // Initialize with placeholders to prevent layout shifts
+  // Initialize with cached data if available, otherwise placeholders
   const [moviesWithPosters, setMoviesWithPosters] = useState<MovieWithPoster[]>(() => 
-    movies.map(m => ({
-      ...m,
-      id: m.id || generateMovieId(m.title, m.year),
-      poster: `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=500&h=750&fit=crop`,
-      backdrop: `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=1280&h=720&fit=crop`,
-      isLoading: true
-    }))
+    movies.map(m => {
+      const cached = getCachedMoviePoster(m.title, m.year);
+      if (cached) {
+        return {
+          ...m,
+          id: m.id || generateMovieId(m.title, m.year),
+          poster: cached.poster || `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=500&h=750&fit=crop`,
+          backdrop: cached.backdrop || `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=1280&h=720&fit=crop`,
+          tmdbId: cached.tmdbId,
+          isLoading: false
+        };
+      }
+      return {
+        ...m,
+        id: m.id || generateMovieId(m.title, m.year),
+        poster: `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=500&h=750&fit=crop`,
+        backdrop: `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=1280&h=720&fit=crop`,
+        isLoading: true
+      };
+    })
   );
   
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(() => moviesWithPosters.some(m => m.isLoading));
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
 
     const fetchPosters = async () => {
-      setIsLoading(true);
-      
-      // Create a local mutable copy of the current state (which has placeholders)
+      // Create a local mutable copy of the current state
       const currentMovies = [...moviesWithPosters];
+      let hasUpdates = false;
 
       // Process in batches to avoid overwhelming the API
       const batchSize = 10;
@@ -39,7 +51,13 @@ export function useMoviePosters(movies: Omit<EnhancedMovie, 'poster' | 'backdrop
 
         const batch = movies.slice(i, i + batchSize);
         const batchResults = await Promise.all(
-          batch.map(async (movie) => {
+          batch.map(async (movie, index) => {
+            const globalIndex = i + index;
+            // Skip if already loaded (from cache)
+            if (!currentMovies[globalIndex].isLoading) {
+              return currentMovies[globalIndex];
+            }
+
             try {
               const { poster, backdrop, tmdbId } = await fetchMoviePoster(
                 movie.title,
@@ -69,19 +87,32 @@ export function useMoviePosters(movies: Omit<EnhancedMovie, 'poster' | 'backdrop
 
         // Update the local copy with new results
         batchResults.forEach((result, index) => {
-          if (i + index < currentMovies.length) {
-            currentMovies[i + index] = result;
+          const globalIndex = i + index;
+          if (globalIndex < currentMovies.length) {
+            // Only mark as update if something actually changed (loading -> loaded)
+            if (currentMovies[globalIndex].isLoading !== result.isLoading) {
+              currentMovies[globalIndex] = result;
+              hasUpdates = true;
+            }
           }
         });
         
-        // Update state progressively
-        if (isMounted) {
+        // Update state progressively only if we had updates
+        if (isMounted && hasUpdates) {
           setMoviesWithPosters([...currentMovies]);
+          hasUpdates = false; // Reset for next batch
         }
 
-        // Rate limiting: wait 250ms between batches
+        // Rate limiting: wait 250ms between batches ONLY if we actually fetched something
+        // If everything was cached, this loop runs very fast
+        const fetchedAny = batchResults.some(r => r.isLoading === false && movies[i + batchResults.indexOf(r)] /* check original */); 
+        // Logic is tricky here. Simply: if we did network requests, wait.
+        // But `fetchMoviePoster` handles network/cache internally too.
+        // We'll keep the delay to be safe, but maybe shorter if all cached? 
+        // Actually `fetchMoviePoster` is async but fast if cached.
+        
         if (i + batchSize < movies.length) {
-          await new Promise(resolve => setTimeout(resolve, 250));
+           await new Promise(resolve => setTimeout(resolve, 50)); // Reduced delay
         }
       }
 

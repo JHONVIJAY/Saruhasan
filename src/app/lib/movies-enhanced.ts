@@ -15,7 +15,47 @@ export interface EnhancedMovie {
 }
 
 // Cache for TMDB lookups to avoid repeated API calls
-const tmdbCache = new Map<string, any>();
+// We use a memory cache backed by localStorage for persistence across refreshes
+const MEMORY_CACHE = new Map<string, any>();
+const CACHE_KEY_PREFIX = 'tmdb_cache_v1_';
+
+function getFromCache(key: string): any | null {
+  // 1. Check memory first (fastest)
+  if (MEMORY_CACHE.has(key)) {
+    return MEMORY_CACHE.get(key);
+  }
+
+  // 2. Check localStorage
+  try {
+    const item = localStorage.getItem(CACHE_KEY_PREFIX + key);
+    if (item) {
+      const parsed = JSON.parse(item);
+      // Populate memory cache for next time
+      MEMORY_CACHE.set(key, parsed);
+      return parsed;
+    }
+  } catch (e) {
+    // Ignore localStorage errors
+  }
+
+  return null;
+}
+
+function setToCache(key: string, value: any) {
+  // 1. Set memory
+  MEMORY_CACHE.set(key, value);
+
+  // 2. Set localStorage
+  try {
+    localStorage.setItem(CACHE_KEY_PREFIX + key, JSON.stringify(value));
+  } catch (e) {
+    // Ignore quota exceeded errors
+  }
+}
+
+export function getCachedMoviePoster(title: string, year: string): { poster: string | null; backdrop: string | null; tmdbId?: number } | null {
+  return getFromCache(`${title}|${year}`);
+}
 
 /**
  * Generate a unique ID from title and year
@@ -34,22 +74,23 @@ export async function fetchMoviePoster(
   const cacheKey = `${title}|${year}`;
   
   // Check cache first
-  if (tmdbCache.has(cacheKey)) {
-    return tmdbCache.get(cacheKey);
+  const cached = getFromCache(cacheKey);
+  if (cached) {
+    return cached;
   }
 
   try {
     const tmdbMovie = await searchMovie(title, year);
     
     if (tmdbMovie) {
+      // Cache the result
       const result = {
         poster: getPosterUrl(tmdbMovie.poster_path, 'w500'),
         backdrop: getBackdropUrl(tmdbMovie.backdrop_path, 'w1280'),
         tmdbId: tmdbMovie.id
       };
       
-      // Cache the result
-      tmdbCache.set(cacheKey, result);
+      setToCache(cacheKey, result);
       return result;
     }
   } catch (error) {
@@ -58,7 +99,7 @@ export async function fetchMoviePoster(
 
   // Return null if not found
   const result = { poster: null, backdrop: null };
-  tmdbCache.set(cacheKey, result);
+  setToCache(cacheKey, result);
   return result;
 }
 

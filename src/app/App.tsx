@@ -13,6 +13,11 @@ function ScrollToTop() {
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
+    // Disable browser's default scroll restoration to prevent conflicts
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+
     if (hash) {
       // If there is a hash, scroll to it
       const element = document.querySelector(hash);

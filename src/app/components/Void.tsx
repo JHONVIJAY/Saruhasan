@@ -621,6 +621,7 @@ export function Void() {
                   {isMobile && (
                 <div className="md:hidden w-full">
                   <Swiper
+                    key={`mobile-swiper-${postersLoading ? 'loading' : 'loaded'}`}
                     effect={'coverflow'}
                     grabCursor={true}
                     centeredSlides={true}
@@ -656,6 +657,7 @@ export function Void() {
               {!isMobile && (
                 <div className="hidden md:block">
                   <Swiper
+                    key={`desktop-swiper-${postersLoading ? 'loading' : 'loaded'}`}
                     spaceBetween={24}
                     slidesPerView={4}
                     breakpoints={{
