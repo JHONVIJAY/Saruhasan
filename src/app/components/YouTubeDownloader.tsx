@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Youtube, Download, Loader2, Link as LinkIcon, AlertCircle, Film, Music, User, CheckCircle2 } from 'lucide-react';
+import { Youtube, Download, Loader2, Link as LinkIcon, AlertCircle, Film, Music, User, CheckCircle2, ExternalLink } from 'lucide-react';
 
 export function YouTubeDownloader() {
   const [url, setUrl] = useState('');
@@ -14,6 +14,7 @@ export function YouTubeDownloader() {
     author: string;
   } | null>(null);
   const [error, setError] = useState('');
+  const [showFallback, setShowFallback] = useState(false);
 
   const extractVideoId = (url: string) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -65,6 +66,7 @@ export function YouTubeDownloader() {
     
     setIsDownloading(true);
     setError('');
+    setShowFallback(false);
     
     try {
       // Primary method: Cobalt API via CORS Proxy
@@ -107,15 +109,9 @@ export function YouTubeDownloader() {
       setTimeout(() => setDownloadStatus('idle'), 3000);
 
     } catch (err) {
-      // Silent fallback: If the native API fails (common in frontend-only apps due to CORS),
-      // strictly fall back to the external service without logging a console error.
-      // This ensures the user gets the file smoothly without seeing "Errors".
-      
-      const backupUrl = `https://ssyoutube.com/watch?v=${videoInfo.id}`;
-      window.open(backupUrl, '_blank');
-      
-      setDownloadStatus('success');
-      setTimeout(() => setDownloadStatus('idle'), 3000);
+      setError('Primary server busy. Please use the backup link.');
+      setShowFallback(true);
+      setDownloadStatus('error');
     } finally {
       setIsDownloading(false);
     }
@@ -133,8 +129,8 @@ export function YouTubeDownloader() {
         {/* Background Effects */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(220,38,38,0.12),transparent_70%)] opacity-100" />
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-600/5 rounded-full blur-[100px] mix-blend-screen animate-pulse" />
-          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-orange-500/5 rounded-full blur-[100px] mix-blend-screen animate-pulse" style={{ animationDelay: '2s' }} />
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-600/5 rounded-full blur-[100px] mix-blend-screen" />
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-orange-500/5 rounded-full blur-[100px] mix-blend-screen" style={{ animationDelay: '2s' }} />
           <div className="absolute inset-0 opacity-[0.03]" 
             style={{ 
               backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`, 
@@ -142,7 +138,7 @@ export function YouTubeDownloader() {
             }} 
           />
         </div>
-        <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/10 rounded-full blur-[100px] animate-pulse" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/10 rounded-full blur-[100px]" />
         
         <div className="relative z-10">
           {/* Header */}
@@ -260,6 +256,30 @@ export function YouTubeDownloader() {
                         >
                           <CheckCircle2 className="w-4 h-4" />
                           <span>Download started!</span>
+                        </motion.div>
+                      )}
+
+                      {showFallback && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0 }}
+                          className="mt-4 flex flex-col gap-3 items-center md:items-start"
+                        >
+                           <div className="flex items-center gap-2 text-yellow-400 text-sm">
+                              <AlertCircle className="w-4 h-4" />
+                              <span>{error}</span>
+                           </div>
+                           
+                           <a 
+                             href={`https://ssyoutube.com/watch?v=${videoInfo.id}`}
+                             target="_blank"
+                             rel="noopener noreferrer"
+                             className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 text-sm transition-all duration-300 group/link"
+                           >
+                              <span>Try Backup Server</span>
+                              <ExternalLink className="w-3 h-3 group-hover/link:translate-x-0.5 transition-transform" />
+                           </a>
                         </motion.div>
                       )}
                     </AnimatePresence>

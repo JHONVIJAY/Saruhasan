@@ -1,14 +1,13 @@
 import { useState, useEffect, useMemo } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import { PREMIUM_SLIDESHOW_MOVIES, TOTAL_FILMS_WATCHED, Movie } from "../lib/movies";
 import { Film, Sparkles, Play, Shuffle, RefreshCw } from "lucide-react";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, FreeMode, EffectCoverflow } from 'swiper/modules';
-import type { Swiper as SwiperType } from 'swiper';
-import { useMoviePosters, MovieWithPoster, fetchSingleMoviePoster } from '../lib/useMoviePosters';
-import { discoverRandomMovies, getTrendingMovies, getPosterUrl, getBackdropUrl, getGenreName, getMovieCredits, findDirector, TMDBMovie } from '../lib/tmdb';
+import { useMoviePosters, MovieWithPoster } from '../lib/useMoviePosters';
+import { discoverRandomMovies, getPosterUrl, getBackdropUrl, getGenreName, getMovieCredits, findDirector, TMDBMovie } from '../lib/tmdb';
 import { getRatingDisplay, generateMovieId } from '../lib/movies-enhanced';
-import { recommendationEngine, RecommendationStrategy, RecommendationOptions } from '../lib/recommendation-engine';
+import { recommendationEngine, RecommendationOptions } from '../lib/recommendation-engine';
 import { YouTubeDownloader } from './YouTubeDownloader';
 
 // Import Swiper styles
@@ -19,7 +18,10 @@ import 'swiper/css/effect-coverflow';
 function MoviePoster({ movie, index, disableHoverEffect = false }: { movie: Movie; index: number; disableHoverEffect?: boolean }) {
   const [hasError, setHasError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
+
+  const handleClick = () => {
+    window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(movie.title + ' trailer ' + movie.year)}`, '_blank');
+  };
 
   return (
     <div
@@ -29,20 +31,19 @@ function MoviePoster({ movie, index, disableHoverEffect = false }: { movie: Movi
     >
       {/* Main Card Container with Enhanced Styling */}
       <motion.div
+        onClick={handleClick}
         animate={{
           scale: !disableHoverEffect && isHovered ? 1.05 : 1,
           y: !disableHoverEffect && isHovered ? -12 : 0,
+          boxShadow: !disableHoverEffect && isHovered 
+            ? '0 32px 64px -12px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.1)' 
+            : '0 4px 16px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.03)'
         }}
         transition={{ 
           duration: 0.4,
           ease: [0.25, 0.1, 0.25, 1]
         }}
-        className="relative aspect-[2/3] rounded-2xl overflow-hidden cursor-pointer isolate"
-        style={{
-          boxShadow: !disableHoverEffect && isHovered 
-            ? '0 32px 64px -12px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.1)' 
-            : '0 4px 16px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.03)'
-        }}
+        className="relative aspect-[2/3] rounded-2xl overflow-hidden cursor-pointer isolate bg-neutral-900"
       >
         {/* Border Gradient Overlay */}
         <div className="absolute inset-0 rounded-2xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none z-10"
@@ -57,19 +58,13 @@ function MoviePoster({ movie, index, disableHoverEffect = false }: { movie: Movi
 
         {/* Poster Image */}
         <div className="absolute inset-0 bg-neutral-950">
-          {/* Loading Shimmer */}
-          {!imageLoaded && !hasError && (
-            <div className="absolute inset-0 bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 animate-pulse" />
-          )}
-          
           {!hasError ? (
             <img
               src={movie.poster || ''}
               alt={movie.title}
-              className={`w-full h-full object-cover transition-all duration-700 ${
-                imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
-              }`}
-              onLoad={() => setImageLoaded(true)}
+              loading="lazy"
+              decoding="async"
+              className="w-full h-full object-cover"
               onError={() => setHasError(true)}
             />
           ) : (
@@ -412,6 +407,13 @@ function MovieSuggesterCard({ movies }: { movies: Movie[] }) {
                       <RefreshCw className="w-4 h-4 group-hover/btn:rotate-180 transition-transform duration-500" />
                       Suggest Another
                     </button>
+                    <button
+                      onClick={() => window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(suggestedMovie.title + ' trailer ' + suggestedMovie.year)}`, '_blank')}
+                      className="inline-flex items-center justify-center gap-2 px-4 md:px-6 py-2.5 md:py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white text-sm md:text-base font-medium transition-all duration-300 w-full sm:w-fit group/btn"
+                    >
+                      <Play className="w-4 h-4 fill-white/50 group-hover/btn:fill-white transition-colors" />
+                      Watch Trailer
+                    </button>
                   </div>
                 </div>
               </motion.div>
@@ -442,6 +444,18 @@ function MovieSuggesterCard({ movies }: { movies: Movie[] }) {
 }
 
 export function Void() {
+  // Optimization: Track mobile state to reduce DOM nodes
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.matchMedia('(max-width: 768px)').matches);
+    checkMobile();
+    
+    const mediaQuery = window.matchMedia('(max-width: 768px)');
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, []);
   // Memoize the movies array to prevent infinite re-renders
   const moviesToFetch = useMemo(() => 
     PREMIUM_SLIDESHOW_MOVIES.map(m => ({
@@ -467,8 +481,8 @@ export function Void() {
       {/* Enhanced Background Elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Gradient Orbs */}
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-sky-500/10 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-sky-500/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[100px]" style={{ animationDelay: '1s' }} />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-cyan-500/5 rounded-full blur-[150px]" />
         
         {/* Grid Pattern */}
@@ -623,61 +637,65 @@ export function Void() {
             {/* Slideshow Container */}
             <div className="md:px-12 py-4">
               {/* Mobile Poster Slider (Coverflow) */}
-              <div className="md:hidden w-full">
-                <Swiper
-                  effect={'coverflow'}
-                  grabCursor={true}
-                  centeredSlides={true}
-                  slidesPerView={'auto'}
-                  loop={hasEnoughSlides}
-                  speed={800}
-                  autoplay={{
-                    delay: 2000,
-                    disableOnInteraction: false,
-                  }}
-                  coverflowEffect={{
-                    rotate: 0,
-                    stretch: 0,
-                    depth: 100,
-                    modifier: 2.5,
-                    slideShadows: false,
-                  }}
-                  modules={[EffectCoverflow, Autoplay]}
-                  className="w-full !pb-8"
-                >
-                  {displayMovies.map((movie, index) => (
-                    <SwiperSlide key={`mobile-${movie.id}-${index}`} style={{ width: '200px' }}>
-                      <div className="px-2">
-                        <MoviePoster movie={movie} index={index} disableHoverEffect={true} />
-                      </div>
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
-              </div>
+              {isMobile && (
+                <div className="md:hidden w-full">
+                  <Swiper
+                    effect={'coverflow'}
+                    grabCursor={true}
+                    centeredSlides={true}
+                    slidesPerView={'auto'}
+                    loop={hasEnoughSlides}
+                    speed={800}
+                    autoplay={{
+                      delay: 2000,
+                      disableOnInteraction: false,
+                    }}
+                    coverflowEffect={{
+                      rotate: 0,
+                      stretch: 0,
+                      depth: 100,
+                      modifier: 2.5,
+                      slideShadows: false,
+                    }}
+                    modules={[EffectCoverflow, Autoplay]}
+                    className="w-full !pb-8"
+                  >
+                    {displayMovies.map((movie, index) => (
+                      <SwiperSlide key={`mobile-${movie.id}-${index}`} style={{ width: '200px' }}>
+                        <div className="px-2">
+                          <MoviePoster movie={movie} index={index} disableHoverEffect={true} />
+                        </div>
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                </div>
+              )}
 
               {/* Desktop Ticker (FreeMode) */}
-              <div className="hidden md:block">
-                <Swiper
-                  spaceBetween={30}
-                  slidesPerView={'auto'}
-                  loop={hasEnoughSlides}
-                  speed={3500}
-                  autoplay={{
-                    delay: 0,
-                    disableOnInteraction: false,
-                    pauseOnMouseEnter: true,
-                  }}
-                  freeMode={true}
-                  modules={[Autoplay, FreeMode]}
-                  className="!pb-12"
-                >
-                  {displayMovies.map((movie, index) => (
-                    <SwiperSlide key={`desktop-${movie.id}-${index}`} style={{ width: '220px' }}>
-                      <MoviePoster movie={movie} index={index} />
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
-              </div>
+              {!isMobile && (
+                <div className="hidden md:block">
+                  <Swiper
+                    spaceBetween={30}
+                    slidesPerView={'auto'}
+                    loop={hasEnoughSlides}
+                    speed={3500}
+                    autoplay={{
+                      delay: 0,
+                      disableOnInteraction: false,
+                      pauseOnMouseEnter: true,
+                    }}
+                    freeMode={true}
+                    modules={[Autoplay, FreeMode]}
+                    className="!pb-12"
+                  >
+                    {displayMovies.map((movie, index) => (
+                      <SwiperSlide key={`desktop-${movie.id}-${index}`} style={{ width: '220px' }}>
+                        <MoviePoster movie={movie} index={index} />
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                </div>
+              )}
             </div>
             
             {/* Bottom Reflection Effect */}
