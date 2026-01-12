@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import heroImg from "../../assets/0575f999a9ea5865df7e385148b08517b640dc26.png";
+// import heroImg from "../../assets/0575f999a9ea5865df7e385148b08517b640dc26.png";
 import { ArrowDown } from "lucide-react";
 import { BackgroundRipple } from "./ui/BackgroundRipple";
 
@@ -100,14 +100,14 @@ export function HeroSolid() {
       {/* IMAGE CONTAINER */}
       <div className="relative w-full max-w-[1400px] h-[40vh] md:h-[65vh] overflow-hidden bg-[#050505] pointer-events-none">
         <motion.div style={{ y, opacity }} className="w-full h-full">
-          <motion.img
+          {/* <motion.img
             initial={{ scale: 1.2, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
+            animate={{ scale: 1, opacity: 1 }}  
             transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
             src={heroImg}
             alt="Saruhasan Sankar"
             className="w-full h-full object-cover object-center"
-          />
+          /> */}
           {/* Gradient Overlay for integration */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60" />
         </motion.div>

@@ -1,14 +1,32 @@
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { NavbarMix } from "./components/NavbarMix";
-import { HeroSolid } from "./components/HeroSolid";
-import { Marquee } from "./components/Marquee";
-import { WorkGrid } from "./components/WorkGrid";
-import { ExperienceEditorial } from "./components/ExperienceEditorial";
-import { AboutSpecs } from "./components/AboutSpecs";
 import { Grain } from "./components/Grain";
 import { CustomCursor } from "./components/ui/CustomCursor";
 import { Preloader } from "./components/Preloader";
 import { Footer } from "./components/Footer";
 import { ReactLenis } from "lenis/react";
+import { Home } from "./pages/Home";
+import { VoidPage } from "./pages/VoidPage";
+import { useEffect } from "react";
+
+function ScrollToTop() {
+  const { pathname, hash } = useLocation();
+
+  useEffect(() => {
+    if (hash) {
+      // If there is a hash, scroll to it
+      const element = document.querySelector(hash);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      // If no hash (new page), scroll to top
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, hash]);
+
+  return null;
+}
 
 export default function App() {
   const lenisOptions = {
@@ -25,7 +43,7 @@ export default function App() {
 
   return (
     <ReactLenis root options={lenisOptions}>
-      <div className="relative min-h-screen bg-[#050505] text-[#EAEAEA] font-sans selection:bg-[#FFFFFF] selection:text-black cursor-none">
+      <div className="relative min-h-screen bg-[#050505] text-[#EAEAEA] font-sans selection:bg-[#FFFFFF] selection:text-black md:cursor-none">
         <Preloader />
         <CustomCursor />
         <Grain />
