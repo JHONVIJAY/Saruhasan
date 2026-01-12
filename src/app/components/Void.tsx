@@ -17,7 +17,6 @@ import 'swiper/css/effect-coverflow';
 // Movie poster card component
 function MoviePoster({ movie, index, disableHoverEffect = false }: { movie: Movie; index: number; disableHoverEffect?: boolean }) {
   const [hasError, setHasError] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
 
   const handleClick = () => {
     window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(movie.title + ' trailer ' + movie.year)}`, '_blank');
@@ -25,25 +24,17 @@ function MoviePoster({ movie, index, disableHoverEffect = false }: { movie: Movi
 
   return (
     <div
-      onMouseEnter={() => !disableHoverEffect && setIsHovered(true)}
-      onMouseLeave={() => !disableHoverEffect && setIsHovered(false)}
-      className="w-full group/card"
+      className="w-full h-full group/card perspective-1000"
     >
-      {/* Main Card Container with Enhanced Styling */}
-      <motion.div
+      {/* Main Card Container with CSS-only Animations for Performance */}
+      <div
         onClick={handleClick}
-        animate={{
-          scale: !disableHoverEffect && isHovered ? 1.05 : 1,
-          y: !disableHoverEffect && isHovered ? -12 : 0,
-          boxShadow: !disableHoverEffect && isHovered 
-            ? '0 32px 64px -12px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.1)' 
-            : '0 4px 16px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.03)'
-        }}
-        transition={{ 
-          duration: 0.4,
-          ease: [0.25, 0.1, 0.25, 1]
-        }}
-        className="relative aspect-[2/3] rounded-2xl overflow-hidden cursor-pointer isolate bg-neutral-900"
+        className={`
+          relative w-full aspect-[2/3] rounded-2xl overflow-hidden cursor-pointer isolate bg-neutral-900
+          transition-all duration-500 ease-out transform-gpu
+          ${!disableHoverEffect ? 'hover:scale-105 hover:-translate-y-3 hover:shadow-[0_32px_64px_-12px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.1)]' : ''}
+          shadow-[0_4px_16px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.03)]
+        `}
       >
         {/* Border Gradient Overlay */}
         <div className="absolute inset-0 rounded-2xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none z-10"
@@ -64,7 +55,7 @@ function MoviePoster({ movie, index, disableHoverEffect = false }: { movie: Movi
               alt={movie.title}
               loading="lazy"
               decoding="async"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110"
               onError={() => setHasError(true)}
             />
           ) : (
@@ -94,45 +85,30 @@ function MoviePoster({ movie, index, disableHoverEffect = false }: { movie: Movi
         </div>
 
         {/* Desktop - Hover Overlay */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isHovered ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
-          className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent hidden md:block"
+        <div
+          className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent hidden md:block opacity-0 group-hover/card:opacity-100 transition-opacity duration-300"
         />
 
         {/* Desktop - Premium Content on Hover */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ 
-            opacity: isHovered ? 1 : 0,
-            y: isHovered ? 0 : 30
-          }}
-          transition={{ 
-            duration: 0.4, 
-            delay: isHovered ? 0.1 : 0,
-            ease: [0.25, 0.1, 0.25, 1]
-          }}
-          className="absolute inset-0 p-6 flex flex-col justify-end hidden md:flex"
+        <div
+          className="absolute inset-0 p-6 flex flex-col justify-end hidden md:flex opacity-0 translate-y-4 group-hover/card:opacity-100 group-hover/card:translate-y-0 transition-all duration-500 ease-out delay-75"
         >
           {/* Play Button with Glow */}
-          <div className="mb-4">
-            <motion.div 
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="relative inline-flex items-center justify-center w-12 h-12 rounded-full bg-white cursor-pointer group/play shadow-lg shadow-white/10 hover:shadow-white/20 transition-shadow"
+          <div className="mb-4 transform translate-y-4 opacity-0 group-hover/card:translate-y-0 group-hover/card:opacity-100 transition-all duration-500 delay-100">
+            <div 
+              className="relative inline-flex items-center justify-center w-12 h-12 rounded-full bg-white cursor-pointer group/play shadow-lg shadow-white/10 hover:shadow-white/20 transition-all hover:scale-110 active:scale-95"
             >
               <Play className="w-5 h-5 text-black fill-black ml-0.5" />
-            </motion.div>
+            </div>
           </div>
 
           {/* Title with Better Typography */}
-          <h4 className="text-xl font-bold text-white mb-2 leading-tight line-clamp-2 tracking-tight">
+          <h4 className="text-xl font-bold text-white mb-2 leading-tight line-clamp-2 tracking-tight transform translate-y-4 opacity-0 group-hover/card:translate-y-0 group-hover/card:opacity-100 transition-all duration-500 delay-150">
             {movie.title}
           </h4>
 
           {/* Meta Info with Better Design */}
-          <div className="flex items-center gap-2.5 mb-3">
+          <div className="flex items-center gap-2.5 mb-3 transform translate-y-4 opacity-0 group-hover/card:translate-y-0 group-hover/card:opacity-100 transition-all duration-500 delay-200">
             <span className="px-2 py-1 rounded-md bg-white/10 backdrop-blur-md text-xs font-medium text-white">
               {movie.year}
             </span>
@@ -144,7 +120,7 @@ function MoviePoster({ movie, index, disableHoverEffect = false }: { movie: Movi
 
           {/* Rating Display */}
           {movie.rating && (
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-2 transform translate-y-4 opacity-0 group-hover/card:translate-y-0 group-hover/card:opacity-100 transition-all duration-500 delay-250">
               <span className="text-lg">
                 {getRatingDisplay(movie.rating)}
               </span>
@@ -156,23 +132,20 @@ function MoviePoster({ movie, index, disableHoverEffect = false }: { movie: Movi
 
           {/* Genre */}
           {movie.genre && (
-            <p className="text-sm text-white/60 line-clamp-2 leading-relaxed font-light">
+            <p className="text-sm text-white/60 line-clamp-2 leading-relaxed font-light transform translate-y-4 opacity-0 group-hover/card:translate-y-0 group-hover/card:opacity-100 transition-all duration-500 delay-300">
               {movie.genre}
             </p>
           )}
 
           {/* Subtle Bottom Gradient */}
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent -z-10" />
-        </motion.div>
+        </div>
 
         {/* Desktop - Subtle Default State Overlay */}
-        <motion.div
-          initial={{ opacity: 1 }}
-          animate={{ opacity: isHovered ? 0 : 1 }}
-          transition={{ duration: 0.3 }}
-          className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none hidden md:block"
+        <div
+          className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none hidden md:block group-hover/card:opacity-0 transition-opacity duration-300"
         />
-      </motion.div>
+      </div>
     </div>
   );
 }
@@ -679,25 +652,30 @@ export function Void() {
                 </div>
               )}
 
-              {/* Desktop Ticker (FreeMode) */}
+              {/* Desktop Slider */}
               {!isMobile && (
                 <div className="hidden md:block">
                   <Swiper
-                    spaceBetween={30}
-                    slidesPerView={'auto'}
+                    spaceBetween={24}
+                    slidesPerView={4}
+                    breakpoints={{
+                      768: { slidesPerView: 3, spaceBetween: 20 },
+                      1024: { slidesPerView: 4, spaceBetween: 24 },
+                      1280: { slidesPerView: 5, spaceBetween: 30 },
+                      1536: { slidesPerView: 6, spaceBetween: 32 },
+                    }}
                     loop={hasEnoughSlides}
-                    speed={3500}
+                    speed={800}
                     autoplay={{
-                      delay: 0,
+                      delay: 4000,
                       disableOnInteraction: false,
                       pauseOnMouseEnter: true,
                     }}
-                    freeMode={true}
-                    modules={[Autoplay, FreeMode]}
-                    className="!pb-12"
+                    modules={[Autoplay]}
+                    className="!pb-12 !px-4"
                   >
                     {displayMovies.map((movie, index) => (
-                      <SwiperSlide key={`desktop-${movie.id}-${index}`} style={{ width: '220px' }}>
+                      <SwiperSlide key={`desktop-${movie.id}-${index}`}>
                         <MoviePoster movie={movie} index={index} />
                       </SwiperSlide>
                     ))}

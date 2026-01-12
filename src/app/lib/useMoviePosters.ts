@@ -1,9 +1,5 @@
-import { useState, useEffect } from "react";
-import {
-  fetchMoviePoster,
-  EnhancedMovie,
-  generateMovieId,
-} from "./movies-enhanced";
+import { useState, useEffect } from 'react';
+import { fetchMoviePoster, EnhancedMovie, generateMovieId } from './movies-enhanced';
 
 export interface MovieWithPoster extends EnhancedMovie {
   isLoading?: boolean;
@@ -12,21 +8,18 @@ export interface MovieWithPoster extends EnhancedMovie {
 /**
  * Custom hook to fetch and cache TMDB posters for movies
  */
-export function useMoviePosters(
-  movies: Omit<EnhancedMovie, "poster" | "backdrop">[]
-) {
+export function useMoviePosters(movies: Omit<EnhancedMovie, 'poster' | 'backdrop'>[]) {
   // Initialize with placeholders to prevent layout shifts
-  const [moviesWithPosters, setMoviesWithPosters] = useState<MovieWithPoster[]>(
-    () =>
-      movies.map((m) => ({
-        ...m,
-        id: m.id || generateMovieId(m.title, m.year),
-        poster: `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=500&h=750&fit=crop`,
-        backdrop: `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=1280&h=720&fit=crop`,
-        isLoading: true,
-      }))
+  const [moviesWithPosters, setMoviesWithPosters] = useState<MovieWithPoster[]>(() => 
+    movies.map(m => ({
+      ...m,
+      id: m.id || generateMovieId(m.title, m.year),
+      poster: `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=500&h=750&fit=crop`,
+      backdrop: `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=1280&h=720&fit=crop`,
+      isLoading: true
+    }))
   );
-
+  
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,7 +28,7 @@ export function useMoviePosters(
 
     const fetchPosters = async () => {
       setIsLoading(true);
-
+      
       // Create a local mutable copy of the current state (which has placeholders)
       const currentMovies = [...moviesWithPosters];
 
@@ -56,14 +49,10 @@ export function useMoviePosters(
               return {
                 ...movie,
                 id: movie.id || generateMovieId(movie.title, movie.year),
-                poster:
-                  poster ||
-                  `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=500&h=750&fit=crop`,
-                backdrop:
-                  backdrop ||
-                  `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=1280&h=720&fit=crop`,
+                poster: poster || `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=500&h=750&fit=crop`,
+                backdrop: backdrop || `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=1280&h=720&fit=crop`,
                 tmdbId,
-                isLoading: false,
+                isLoading: false
               };
             } catch (error) {
               console.error(`Error fetching poster for ${movie.title}:`, error);
@@ -72,7 +61,7 @@ export function useMoviePosters(
                 id: movie.id || generateMovieId(movie.title, movie.year),
                 poster: `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=500&h=750&fit=crop`,
                 backdrop: `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=1280&h=720&fit=crop`,
-                isLoading: false,
+                isLoading: false
               };
             }
           })
@@ -84,7 +73,7 @@ export function useMoviePosters(
             currentMovies[i + index] = result;
           }
         });
-
+        
         // Update state progressively
         if (isMounted) {
           setMoviesWithPosters([...currentMovies]);
@@ -92,7 +81,7 @@ export function useMoviePosters(
 
         // Rate limiting: wait 250ms between batches
         if (i + batchSize < movies.length) {
-          await new Promise((resolve) => setTimeout(resolve, 250));
+          await new Promise(resolve => setTimeout(resolve, 250));
         }
       }
 
@@ -101,7 +90,7 @@ export function useMoviePosters(
       }
     };
 
-    fetchPosters().catch((err) => {
+    fetchPosters().catch(err => {
       if (isMounted) {
         setError(err.message);
         setIsLoading(false);
@@ -134,16 +123,12 @@ export async function fetchSingleMoviePoster(
       year,
       rating: 0,
       genre,
-      leadActor: "",
-      director: "",
-      poster:
-        poster ||
-        `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=500&h=750&fit=crop`,
-      backdrop:
-        backdrop ||
-        `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=1280&h=720&fit=crop`,
+      leadActor: '',
+      director: '',
+      poster: poster || `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=500&h=750&fit=crop`,
+      backdrop: backdrop || `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=1280&h=720&fit=crop`,
       tmdbId,
-      isLoading: false,
+      isLoading: false
     };
   } catch (error) {
     return {
@@ -152,11 +137,11 @@ export async function fetchSingleMoviePoster(
       year,
       rating: 0,
       genre,
-      leadActor: "",
-      director: "",
+      leadActor: '',
+      director: '',
       poster: `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=500&h=750&fit=crop`,
       backdrop: `https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=1280&h=720&fit=crop`,
-      isLoading: false,
+      isLoading: false
     };
   }
 }
