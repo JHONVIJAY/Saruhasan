@@ -91,5 +91,15 @@ export const resumeData = {
     "Framer Motion",
     "Figma",
     "Node.js"
+  ],
+  hobbies: [
+    {
+      name: "Cinema",
+      description: "A voracious appetite for visual storytelling and film history."
+    },
+    {
+      name: "Literature",
+      description: "Immersing in written worlds and exploring the depths of human thought."
+    }
   ]
 };

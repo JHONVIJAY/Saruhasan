@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { resumeData } from "../data/resume";
@@ -84,7 +85,7 @@ export function NavbarMix() {
         }`}
     >
         <div className="min-w-[120px] md:min-w-[140px]">
-             <a href="#index" className="block relative h-6 md:h-8 overflow-hidden group">
+             <Link to="/#index" className="block relative h-6 md:h-8 overflow-hidden group">
                 <AnimatePresence mode="wait">
                     <motion.div
                         key="full"
@@ -113,22 +114,23 @@ export function NavbarMix() {
                         </span>
                     </motion.div>
                 </AnimatePresence>
-             </a>
+             </Link>
         </div>
 
         {/* Enhanced Desktop Navigation */}
         <div className="hidden md:flex items-center gap-10">
              {[
-               { name: 'Index', href: '#index' },
-               { name: 'Works', href: '#works' },
-               { name: 'History', href: '#experience' },
-               { name: 'Profile', href: '#profile' },
-               { name: 'Contact', href: '#contact' }
+               { name: 'Index', href: '/#index' },
+               { name: 'Works', href: '/#works' },
+               { name: 'History', href: '/#experience' },
+               { name: 'Profile', href: '/#profile' },
+               { name: 'Void', href: '/void' },
+               { name: 'Contact', href: '/#contact' }
              ].map((item, i) => (
-                 <a key={i} href={item.href} className="relative font-mono text-[11px] uppercase tracking-[0.2em] text-white/50 hover:text-white transition-colors duration-300 group">
+                 <Link key={i} to={item.href} className="relative font-mono text-[11px] uppercase tracking-[0.2em] text-white/50 hover:text-white transition-colors duration-300 group">
                      {item.name}
                      <span className="absolute -bottom-2 left-0 w-0 h-[1px] bg-sky-500 transition-all duration-300 group-hover:w-full opacity-0 group-hover:opacity-100" />
-                 </a>
+                 </Link>
              ))}
         </div>
 
@@ -181,15 +183,16 @@ export function NavbarMix() {
                 }} />
             </div>
 
-            <div className="flex-1 flex flex-col justify-center px-8 gap-8">
+            <div className="flex-1 flex flex-col justify-center px-8 py-8">
                 {/* Animated menu items */}
                 {[
-                    { name: 'Index', href: '#index' },
-                    { name: 'Works', href: '#works' },
-                    { name: 'History', href: '#experience' },
-                    { name: 'Profile', href: '#profile' },
-                    { name: 'Contact', href: '#contact' }
-                ].map((item, i) => (
+                    { name: 'Index', href: '/#index' },
+                    { name: 'Works', href: '/#works' },
+                    { name: 'History', href: '/#experience' },
+                    { name: 'Profile', href: '/#profile' },
+                    { name: 'Void', href: '/void' },
+                    { name: 'Contact', href: '/#contact' }
+                ].map((item, i, array) => (
                     <motion.div
                         key={i}
                         initial={{ opacity: 0, x: -30 }}
@@ -200,9 +203,10 @@ export function NavbarMix() {
                             duration: 0.5,
                             ease: [0.22, 1, 0.36, 1]
                         }}
+                        className="pb-6"
                     >
-                        <a 
-                            href={item.href}
+                        <Link 
+                            to={item.href}
                             onClick={() => setMobileMenuOpen(false)}
                             className="group flex items-center gap-4 py-2"
                         >
@@ -210,8 +214,10 @@ export function NavbarMix() {
                             <span className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-white/40 group-hover:text-white transition-all duration-300">
                                 {item.name}
                             </span>
-                        </a>
-                        <div className="w-full h-[1px] bg-gradient-to-r from-white/10 to-transparent mt-8" />
+                        </Link>
+                        {i < array.length - 1 && (
+                            <div className="w-full h-[1px] bg-gradient-to-r from-white/10 to-transparent mt-6" />
+                        )}
                     </motion.div>
                 ))}
             </div>
@@ -224,7 +230,7 @@ export function NavbarMix() {
                 transition={{ duration: 0.5, delay: 0.4 }}
                 className="w-full border-t border-white/10 bg-[#050505]"
             >
-                <div className="flex items-end justify-between p-8">
+                <div className="flex flex-col gap-6 p-6 sm:flex-row sm:items-end sm:justify-between sm:p-8">
                     <div className="flex flex-col gap-3">
                         <span className="font-mono text-[10px] uppercase tracking-widest text-white/30">Connect</span>
                         <div className="flex gap-5">
@@ -262,16 +268,16 @@ export function NavbarMix() {
                         </div>
                     </div>
 
-                    <div className="flex flex-col items-end gap-1">
+                    <div className="flex flex-col gap-1 items-start sm:items-end">
                         <span className="font-mono text-[10px] uppercase tracking-widest text-white/30">Identity</span>
-                        <div className="relative h-6 w-32 overflow-hidden text-right">
+                        <div className="relative h-6 w-32 overflow-hidden text-left sm:text-right">
                             <AnimatePresence mode="wait">
                                 <motion.div
                                     key={showAlias ? "john" : "saru"}
                                     initial={{ y: 20, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
                                     exit={{ y: -20, opacity: 0 }}
-                                    className="absolute inset-0 flex items-center justify-end"
+                                    className="absolute inset-0 flex items-center justify-start sm:justify-end"
                                 >
                                     <span className="text-sm font-bold uppercase tracking-wider text-white/40">
                                         {showAlias ? "JOHN" : "SARUHASAN"}
