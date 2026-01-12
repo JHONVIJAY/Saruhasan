@@ -12,7 +12,7 @@ export function Footer() {
   ];
 
   return (
-    <footer id="contact" className="relative z-50 bg-[#050505] pt-20 md:pt-32 lg:pt-40 pb-12 md:pb-16 px-4 md:px-8 border-t border-white/10 overflow-hidden">
+    <footer id="contact" className="relative z-50 bg-[#050505] pt-20 md:pt-32 lg:pt-40 pb-12 md:pb-16 px-4 md:px-8 border-t border-white/10 overflow-hidden scroll-mt-24">
         {/* Subtle gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-sky-500/[0.02] to-transparent pointer-events-none" />
         
@@ -104,15 +104,29 @@ export function Footer() {
             />
 
             {/* Copyright */}
-            <motion.p 
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
-              className="font-mono text-xs text-white/30"
-            >
-                © {new Date().getFullYear()} Saruhasan Sankar. All Rights Reserved.
-            </motion.p>
+            <div className="w-full flex flex-col md:flex-row justify-between items-center gap-4">
+                <motion.p 
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                  className="font-mono text-xs text-white/30 text-center md:text-left"
+                >
+                    © {new Date().getFullYear()} Saruhasan Sankar. All Rights Reserved.
+                </motion.p>
+
+                <motion.button
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, delay: 0.9, ease: [0.22, 1, 0.36, 1] }}
+                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                    className="font-mono text-xs text-white/30 hover:text-white uppercase tracking-widest transition-colors flex items-center gap-2 group cursor-pointer"
+                >
+                    Back to Top
+                    <span className="group-hover:-translate-y-1 transition-transform duration-300">↑</span>
+                </motion.button>
+            </div>
 
         </div>
     </footer>

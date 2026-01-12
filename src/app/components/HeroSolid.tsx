@@ -141,16 +141,6 @@ export function HeroSolid() {
               Available for hire
             </span>
           </motion.div>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.2, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-            className="text-white/90 font-bold text-lg md:text-2xl max-w-2xl pb-4"
-            style={{ lineHeight: "1.8" }}
-          >
-            Engineering digital perfection through rigorous design & code.
-          </motion.p>
         </div>
 
         <div className="pointer-events-none">
