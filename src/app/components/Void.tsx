@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import { PREMIUM_SLIDESHOW_MOVIES, TOTAL_FILMS_WATCHED, Movie } from "../lib/movies";
 import { Film, Sparkles, Play, Shuffle, RefreshCw } from "lucide-react";
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, FreeMode, EffectCoverflow } from 'swiper/modules';
+import { Autoplay, FreeMode } from 'swiper/modules';
 import { useMoviePosters, MovieWithPoster } from '../lib/useMoviePosters';
 import { discoverRandomMovies, getPosterUrl, getBackdropUrl, getGenreName, getMovieCredits, findDirector, TMDBMovie } from '../lib/tmdb';
 import { getRatingDisplay, generateMovieId } from '../lib/movies-enhanced';
@@ -12,7 +12,6 @@ import { YouTubeDownloader } from './YouTubeDownloader';
 
 // Import Swiper styles
 import 'swiper/css';
-import 'swiper/css/effect-coverflow';
 
 // Movie poster card component
 function MoviePoster({ movie, index, disableHoverEffect = false }: { movie: Movie; index: number; disableHoverEffect?: boolean }) {
@@ -617,33 +616,26 @@ export function Void() {
                 </div>
               ) : (
                 <>
-                  {/* Mobile Poster Slider (Coverflow) */}
+                  {/* Mobile Poster Slider (Standard Slide for Performance) */}
                   {isMobile && (
                 <div className="md:hidden w-full">
                   <Swiper
                     key={`mobile-swiper-${postersLoading ? 'loading' : 'loaded'}`}
-                    effect={'coverflow'}
                     grabCursor={true}
                     centeredSlides={true}
                     slidesPerView={'auto'}
+                    spaceBetween={16}
                     loop={hasEnoughSlides}
-                    speed={800}
+                    speed={600}
                     autoplay={{
-                      delay: 2000,
+                      delay: 3000,
                       disableOnInteraction: false,
                     }}
-                    coverflowEffect={{
-                      rotate: 0,
-                      stretch: 0,
-                      depth: 100,
-                      modifier: 2.5,
-                      slideShadows: false,
-                    }}
-                    modules={[EffectCoverflow, Autoplay]}
+                    modules={[Autoplay]}
                     className="w-full !pb-8"
                   >
                     {displayMovies.map((movie, index) => (
-                      <SwiperSlide key={`mobile-${movie.id}-${index}`} style={{ width: '200px' }}>
+                      <SwiperSlide key={`mobile-${movie.id}-${index}`} style={{ width: '240px' }}>
                         <div className="px-2">
                           <MoviePoster movie={movie} index={index} disableHoverEffect={true} />
                         </div>
