@@ -53,7 +53,13 @@ export async function searchMovie(title: string, year?: string): Promise<TMDBMov
       params.append('year', year);
     }
 
-    const response = await fetch(`${TMDB_BASE_URL}/search/movie?${params}`);
+    const response = await fetch(`${TMDB_BASE_URL}/search/movie?${params}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    });
     
     if (!response.ok) {
       console.error(`TMDB API error for "${title}": ${response.status}`);
@@ -80,7 +86,14 @@ export async function searchMovie(title: string, year?: string): Promise<TMDBMov
 export async function getMovieCredits(movieId: number): Promise<TMDBCredits | null> {
   try {
     const response = await fetch(
-      `${TMDB_BASE_URL}/movie/${movieId}/credits?api_key=${TMDB_API_KEY}`
+      `${TMDB_BASE_URL}/movie/${movieId}/credits?api_key=${TMDB_API_KEY}`,
+      {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      }
     );
 
     if (!response.ok) {
@@ -143,7 +156,13 @@ export async function discoverRandomMovies(count: number = 10): Promise<TMDBMovi
       page: randomPage.toString()
     });
 
-    const response = await fetch(`${TMDB_BASE_URL}/discover/movie?${params}`);
+    const response = await fetch(`${TMDB_BASE_URL}/discover/movie?${params}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    });
     
     if (!response.ok) {
       console.error(`TMDB discover API error: ${response.status}`);
@@ -167,7 +186,14 @@ export async function discoverRandomMovies(count: number = 10): Promise<TMDBMovi
 export async function getTrendingMovies(): Promise<TMDBMovie[]> {
   try {
     const response = await fetch(
-      `${TMDB_BASE_URL}/trending/movie/week?api_key=${TMDB_API_KEY}`
+      `${TMDB_BASE_URL}/trending/movie/week?api_key=${TMDB_API_KEY}`,
+      {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      }
     );
 
     if (!response.ok) {
