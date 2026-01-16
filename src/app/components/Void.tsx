@@ -620,91 +620,77 @@ export function Void() {
                 </div>
               ) : (
                 <>
-                  {/* Mobile Poster Slider (Standard Slide for Performance) */}
+                  {/* Mobile Slider */}
                   {isMobile && (
-                <div className="md:hidden w-full">
-                  <Swiper
-                    key={`mobile-swiper-${postersLoading ? 'loading' : 'loaded'}`}
-                    grabCursor={true}
-                    centeredSlides={true}
-                    slidesPerView={'auto'}
-                    spaceBetween={16}
-                    loop={hasEnoughSlides}
-                    speed={400}
-                    freeMode={{
-                      enabled: true,
-                      momentum: true,
-                      momentumRatio: 0.5,
-                      momentumVelocityRatio: 0.5,
-                      sticky: false,
-                    }}
-                    resistance={true}
-                    resistanceRatio={0.85}
-                    threshold={5}
-                    touchRatio={1.2}
-                    touchAngle={45}
-                    longSwipesRatio={0.3}
-                    slideToClickedSlide={true}
-                    autoplay={{
-                      delay: 4000,
-                      disableOnInteraction: true,
-                      pauseOnMouseEnter: true,
-                    }}
-                    modules={[Autoplay, FreeMode]}
-                    className="w-full !pb-8 mobile-poster-swiper"
-                  >
-                    {displayMovies.map((movie, index) => (
-                      <SwiperSlide key={`mobile-${movie.id}-${index}`} style={{ width: '260px' }}>
-                        <div className="px-2 transition-transform duration-300 ease-out">
-                          <MoviePoster movie={movie} index={index} disableHoverEffect={true} />
-                        </div>
-                      </SwiperSlide>
-                    ))}
-                  </Swiper>
-                </div>
-              )}
+                    <div className="md:hidden">
+                      <Swiper
+                        key={`mobile-swiper-${postersLoading ? 'loading' : 'loaded'}`}
+                        slidesPerView={1.4}
+                        spaceBetween={16}
+                        centeredSlides={true}
+                        pagination={{
+                          clickable: true,
+                          dynamicBullets: true,
+                        }}
+                        loop={hasEnoughSlides}
+                        speed={400}
+                        touchRatio={1}
+                        resistance={true}
+                        resistanceRatio={0.85}
+                        threshold={5}
+                        modules={[Pagination]}
+                        className="mobile-poster-swiper"
+                      >
+                        {displayMovies.map((movie, index) => (
+                          <SwiperSlide key={`mobile-${movie.id}-${index}`}>
+                            <MoviePoster movie={movie} index={index} />
+                          </SwiperSlide>
+                        ))}
+                      </Swiper>
+                    </div>
+                  )}
 
-              {/* Desktop Slider */}
-              {!isMobile && (
-                <div className="hidden md:block">
-                  <Swiper
-                    key={`desktop-swiper-${postersLoading ? 'loading' : 'loaded'}`}
-                    spaceBetween={24}
-                    slidesPerView={4}
-                    pagination={{
-                      clickable: true,
-                      dynamicBullets: true,
-                    }}
-                    breakpoints={{
-                      768: { slidesPerView: 3, spaceBetween: 20 },
-                      1024: { slidesPerView: 4, spaceBetween: 24 },
-                      1280: { slidesPerView: 5, spaceBetween: 30 },
-                      1536: { slidesPerView: 6, spaceBetween: 32 },
-                    }}
-                    loop={hasEnoughSlides}
-                    speed={600}
-                    autoplay={{
-                      delay: 4000,
-                      disableOnInteraction: false,
-                      pauseOnMouseEnter: true,
-                    }}
-                    touchRatio={1.5}
-                    touchAngle={45}
-                    grabCursor={true}
-                    resistance={true}
-                    resistanceRatio={0.85}
-                    threshold={10}
-                    modules={[Autoplay, Pagination]}
-                    className="!pb-16 !px-4 desktop-poster-swiper"
-                  >
-                    {displayMovies.map((movie, index) => (
-                      <SwiperSlide key={`desktop-${movie.id}-${index}`}>
-                        <MoviePoster movie={movie} index={index} />
-                      </SwiperSlide>
-                    ))}
-                  </Swiper>
-                </div>
-              )}
+                  {/* Desktop Slider */}
+                  {!isMobile && (
+                    <div className="hidden md:block">
+                      <Swiper
+                        key={`desktop-swiper-${postersLoading ? 'loading' : 'loaded'}`}
+                        spaceBetween={24}
+                        slidesPerView={4}
+                        pagination={{
+                          clickable: true,
+                          dynamicBullets: true,
+                        }}
+                        breakpoints={{
+                          768: { slidesPerView: 3, spaceBetween: 20 },
+                          1024: { slidesPerView: 4, spaceBetween: 24 },
+                          1280: { slidesPerView: 5, spaceBetween: 30 },
+                          1536: { slidesPerView: 6, spaceBetween: 32 },
+                        }}
+                        loop={hasEnoughSlides}
+                        speed={600}
+                        autoplay={{
+                          delay: 4000,
+                          disableOnInteraction: false,
+                          pauseOnMouseEnter: true,
+                        }}
+                        touchRatio={1.5}
+                        touchAngle={45}
+                        grabCursor={true}
+                        resistance={true}
+                        resistanceRatio={0.85}
+                        threshold={10}
+                        modules={[Autoplay, Pagination]}
+                        className="!pb-16 !px-4 desktop-poster-swiper"
+                      >
+                        {displayMovies.map((movie, index) => (
+                          <SwiperSlide key={`desktop-${movie.id}-${index}`}>
+                            <MoviePoster movie={movie} index={index} />
+                          </SwiperSlide>
+                        ))}
+                      </Swiper>
+                    </div>
+                  )}
                 </>
               )}
             </div>
