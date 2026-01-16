@@ -8,6 +8,8 @@ import { ReactLenis } from "lenis/react";
 import { Home } from "./pages/Home";
 import { VoidPage } from "./pages/VoidPage";
 import { useEffect } from "react";
+import { ErrorBoundary } from "./components/ErrorBoundary";
+import { useWebVitals } from "./hooks/useWebVitals";
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
@@ -48,26 +50,36 @@ export default function App() {
     infinite: false,
   };
 
+  // Track Web Vitals
+  useWebVitals();
+
   return (
-    <ReactLenis root options={lenisOptions}>
-      <BrowserRouter>
-        <ScrollToTop />
-        <div className="relative min-h-screen bg-[#050505] text-[#EAEAEA] font-sans selection:bg-[#FFFFFF] selection:text-black md:cursor-none" style={{ position: 'relative' }}>
-          <Preloader />
-          <CustomCursor />
-          <Grain />
-          <NavbarMix />
-          
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/void" element={<VoidPage />} />
-            {/* Catch-all route for 404s */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-          
-          <Footer />
-        </div>
-      </BrowserRouter>
-    </ReactLenis>
+    <ErrorBoundary>
+      <ReactLenis root options={lenisOptions}>
+        <BrowserRouter>
+          <ScrollToTop />
+          <a href="#main-content" className="skip-to-content">
+            Skip to main content
+          </a>
+          <div className="relative min-h-screen bg-[#050505] text-[#EAEAEA] font-sans selection:bg-[#FFFFFF] selection:text-black" style={{ position: 'relative' }}>
+            <Preloader />
+            <CustomCursor />
+            <Grain />
+            <NavbarMix />
+            
+            <main id="main-content" tabIndex={-1}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/void" element={<VoidPage />} />
+                {/* Catch-all route for 404s */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </main>
+            
+            <Footer />
+          </div>
+        </BrowserRouter>
+      </ReactLenis>
+    </ErrorBoundary>
   );
 }

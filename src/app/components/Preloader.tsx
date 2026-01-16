@@ -13,13 +13,18 @@ export function Preloader() {
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     
-    const timer = setTimeout(() => {
+    // Ensure minimum display time and all assets loaded
+    const minDisplayTime = new Promise(resolve => setTimeout(resolve, 2200));
+    const assetsLoaded = document.readyState === 'complete' 
+      ? Promise.resolve() 
+      : new Promise(resolve => window.addEventListener('load', resolve));
+    
+    Promise.all([minDisplayTime, assetsLoaded]).then(() => {
       setIsLoading(false);
       document.body.style.overflow = originalOverflow;
-    }, 2200); // Reduced to 2.2s for snappier feel
+    });
     
     return () => {
-      clearTimeout(timer);
       document.body.style.overflow = originalOverflow;
     };
   }, []);
@@ -49,9 +54,12 @@ export function Preloader() {
           transition={{ duration: 0.6, delay: 0.8, ease: [0.76, 0, 0.24, 1] }}
           className="fixed inset-0 z-[99999] flex items-center justify-center bg-[#050505]"
           style={{ cursor: 'wait' }}
+          role="status"
+          aria-live="polite"
+          aria-label="Loading application"
         >
            {/* SVG Curtain */}
-           <svg className="absolute top-0 left-0 w-full h-[calc(100%+300px)] pointer-events-none z-10">
+           <svg className="absolute top-0 left-0 w-full h-[calc(100%+300px)] pointer-events-none z-10" aria-hidden="true">
               <motion.path 
                  variants={curve} 
                  initial="initial" 
@@ -74,6 +82,7 @@ export function Preloader() {
                 animate={{ width: 200 }}
                 transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}
                 className="h-[2px] bg-white/20 mt-4 overflow-hidden relative"
+                aria-hidden="true"
               >
                  <motion.div 
                    initial={{ x: "-100%" }}
@@ -82,6 +91,8 @@ export function Preloader() {
                    className="w-full h-full bg-white"
                  />
               </motion.div>
+              
+              <span className="sr-only">Loading, please wait...</span>
            </motion.div>
         </motion.div>
       )}

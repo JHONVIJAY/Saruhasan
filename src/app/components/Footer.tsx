@@ -12,7 +12,7 @@ export function Footer() {
   ];
 
   return (
-    <footer id="contact" className="relative z-50 bg-[#050505] pt-20 md:pt-32 lg:pt-40 pb-12 md:pb-16 px-4 md:px-8 border-t border-white/10 overflow-hidden scroll-mt-24">
+    <footer id="contact" className="relative z-50 bg-[#050505] pt-20 md:pt-32 lg:pt-40 pb-12 md:pb-16 px-4 md:px-8 border-t border-white/10 overflow-hidden scroll-mt-24" role="contentinfo">
         {/* Subtle gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-sky-500/[0.02] to-transparent pointer-events-none" />
         
@@ -50,7 +50,8 @@ export function Footer() {
               </h2>
               <a 
                 href={`mailto:${resumeData.email}`} 
-                className="group relative text-[10vw] md:text-[8vw] lg:text-[6vw] font-black tracking-tighter leading-none hover:text-sky-400 transition-colors duration-700 break-all inline-block"
+                className="group relative text-[10vw] md:text-[8vw] lg:text-[6vw] font-black tracking-tighter leading-none hover:text-sky-400 focus:text-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-4 focus:ring-offset-[#050505] rounded transition-colors duration-700 break-all inline-block"
+                aria-label={`Send email to ${resumeData.email}`}
               >
                 {resumeData.email}
                 <motion.span 
@@ -80,10 +81,11 @@ export function Footer() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: 0.5 + index * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                    className="group relative font-mono text-xs md:text-sm uppercase tracking-widest text-white/60 hover:text-white transition-colors duration-500 inline-flex items-center gap-2"
+                    className="group relative font-mono text-xs md:text-sm uppercase tracking-widest text-white/60 hover:text-white focus:text-white focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 focus:ring-offset-[#050505] rounded transition-colors duration-500 inline-flex items-center gap-2"
+                    aria-label={`Visit ${link.name}`}
                   >
                     {link.name}
-                    <ArrowUpRight className="w-3 h-3 md:w-4 md:h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-500" />
+                    <ArrowUpRight className="w-3 h-3 md:w-4 md:h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-focus:opacity-100 group-focus:translate-x-0.5 group-focus:-translate-y-0.5 transition-all duration-500" />
                     <motion.span 
                       className="absolute -bottom-1 left-0 right-0 h-[1px] bg-sky-400 origin-left"
                       initial={{ scaleX: 0 }}
@@ -121,10 +123,12 @@ export function Footer() {
                     viewport={{ once: true }}
                     transition={{ duration: 0.8, delay: 0.9, ease: [0.22, 1, 0.36, 1] }}
                     onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                    className="font-mono text-xs text-white/30 hover:text-white uppercase tracking-widest transition-colors flex items-center gap-2 group cursor-pointer"
+                    className="font-mono text-xs text-white/30 hover:text-white focus:text-white focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 focus:ring-offset-[#050505] rounded uppercase tracking-widest transition-colors flex items-center gap-2 group cursor-pointer touch-manipulation"
+                    aria-label="Scroll back to top"
+                    type="button"
                 >
                     Back to Top
-                    <span className="group-hover:-translate-y-1 transition-transform duration-300">↑</span>
+                    <span className="group-hover:-translate-y-1 group-focus:-translate-y-1 transition-transform duration-300">↑</span>
                 </motion.button>
             </div>
 

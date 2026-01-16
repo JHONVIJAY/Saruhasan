@@ -83,9 +83,11 @@ export function NavbarMix() {
             ? "bg-black/30 backdrop-blur-2xl border-b border-white/10 shadow-lg py-4" 
             : "bg-transparent border-transparent shadow-none py-6"
         }`}
+        role="navigation"
+        aria-label="Main navigation"
     >
         <div className="min-w-[120px] md:min-w-[140px]">
-             <Link to="/#index" className="block relative h-6 md:h-8 overflow-hidden group">
+             <Link to="/#index" className="block relative h-6 md:h-8 overflow-hidden group" aria-label="Go to homepage">
                 <AnimatePresence mode="wait">
                     <motion.div
                         key="full"
@@ -127,9 +129,14 @@ export function NavbarMix() {
                { name: 'Void', href: '/void' },
                { name: 'Contact', href: '/#contact' }
              ].map((item, i) => (
-                 <Link key={i} to={item.href} className="relative font-mono text-[11px] uppercase tracking-[0.2em] text-white/50 hover:text-white transition-colors duration-300 group">
+                 <Link 
+                   key={i} 
+                   to={item.href} 
+                   className="relative font-mono text-[11px] uppercase tracking-[0.2em] text-white/50 hover:text-white transition-colors duration-300 group focus:outline-none focus:text-white"
+                   aria-label={`Navigate to ${item.name}`}
+                 >
                      {item.name}
-                     <span className="absolute -bottom-2 left-0 w-0 h-[1px] bg-sky-500 transition-all duration-300 group-hover:w-full opacity-0 group-hover:opacity-100" />
+                     <span className="absolute -bottom-2 left-0 w-0 h-[1px] bg-sky-500 transition-all duration-300 group-hover:w-full group-focus:w-full opacity-0 group-hover:opacity-100 group-focus:opacity-100" />
                  </Link>
              ))}
         </div>
@@ -139,8 +146,9 @@ export function NavbarMix() {
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 whileTap={{ scale: 0.9 }}
                 transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                className={`relative z-[100] p-2 transition-colors ${scrolled ? "text-white" : "text-white"} hover:text-sky-400`}
-                aria-label="Toggle menu"
+                className={`relative z-[100] p-2 transition-colors ${scrolled ? "text-white" : "text-white"} hover:text-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 focus:ring-offset-[#050505] rounded touch-manipulation`}
+                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={mobileMenuOpen}
             >
                 <AnimatePresence mode="wait">
                   <motion.div
