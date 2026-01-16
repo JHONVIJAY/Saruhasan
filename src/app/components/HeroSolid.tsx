@@ -21,7 +21,14 @@ function SplitText({ text, className, stroke = false }: { text: string, classNam
     <motion.h1 
       initial="hidden"
       animate="visible"
+<<<<<<< HEAD
       className={`${className} flex flex-wrap`}
+=======
+      className={`${className} flex flex-wrap ${
+        onClick ? "cursor-pointer select-none" : ""
+      }`}
+      onClick={onClick}
+>>>>>>> de601861ded448f2d4eb1fce5c8c94f6d86c1c92
     >
       {text.split("").map((char, i) => (
          <motion.span
@@ -35,6 +42,77 @@ function SplitText({ text, className, stroke = false }: { text: string, classNam
          </motion.span>
       ))}
     </motion.h1>
+  );
+}
+
+function FlipText({ text, className }: { text: string; className?: string }) {
+  // Add invisible character to JOHN to match ANGEL's 5 letters
+  const displayText = text === "JOHN" ? "JOHN " : text;
+
+  return (
+    <div className={`${className} flex flex-wrap`}>
+      {displayText.split("").map((char, i) => (
+        <div
+          key={i}
+          className="inline-block relative"
+          style={{
+            overflow: "clip",
+            overflowClipMargin: "0.2em",
+            height: "1em",
+            lineHeight: "1",
+            display: "inline-flex",
+            alignItems: "center",
+          }}
+        >
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={`${char}-${i}`}
+              initial={{
+                y: "150%",
+                opacity: 0,
+                scale: 0.5,
+                rotateX: 90,
+                filter: "blur(10px)",
+              }}
+              animate={{
+                y: 0,
+                opacity: char === " " && displayText === "JOHN " ? 0 : 1,
+                scale: 1,
+                rotateX: 0,
+                filter: "blur(0px)",
+              }}
+              exit={{
+                y: "-150%",
+                opacity: 0,
+                scale: 0.5,
+                rotateX: -90,
+                filter: "blur(10px)",
+              }}
+              transition={{
+                duration: 0.8,
+                delay: i * 0.04,
+                ease: [0.34, 1.56, 0.64, 1],
+                scale: {
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 20,
+                },
+              }}
+              className="inline-block"
+              style={{
+                WebkitTextStroke: "1px rgba(255, 255, 255, 0.8)",
+                color: "transparent",
+                transformOrigin: "center center",
+                lineHeight: "1",
+                transformStyle: "preserve-3d",
+              }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+          </AnimatePresence>
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -127,6 +205,7 @@ export function HeroSolid() {
              </motion.div>
            </div>
 
+<<<<<<< HEAD
            <div className="pointer-events-none">
                <SplitText 
                  text="JOHN" 
@@ -134,6 +213,16 @@ export function HeroSolid() {
                  className="text-[14vw] md:text-[10vw] leading-[0.85] font-black tracking-tighter uppercase"
                />
            </div>
+=======
+        <div className="pointer-events-auto">
+          <div onClick={handleNameClick} className="cursor-pointer select-none">
+            <FlipText
+              text={displayName}
+              className="text-[14vw] md:text-[10vw] leading-[0.85] font-black tracking-tighter uppercase"
+            />
+          </div>
+        </div>
+>>>>>>> de601861ded448f2d4eb1fce5c8c94f6d86c1c92
       </div>
 
     </section>
