@@ -3,6 +3,45 @@ const TMDB_API_KEY = '0db4b147e5e93aafaf72883962830fa0';
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p';
 
+/**
+ * Fetch with multiple CORS proxy fallbacks
+ */
+async function fetchWithProxy(url: string): Promise<Response> {
+  // Try multiple CORS proxies in order
+  const proxies = [
+    'https://corsproxy.io/?',
+    'https://api.codetabs.com/v1/proxy?quest=',
+    'https://api.allorigins.win/raw?url='
+  ];
+  
+  let lastError: Error | null = null;
+  
+  for (const proxy of proxies) {
+    try {
+      const proxiedUrl = `${proxy}${encodeURIComponent(url)}`;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+      
+      const response = await fetch(proxiedUrl, {
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (response.ok) {
+        return response;
+      }
+    } catch (error) {
+      lastError = error as Error;
+      // Continue to next proxy
+      continue;
+    }
+  }
+  
+  // If all proxies fail, throw the last error
+  throw lastError || new Error('All CORS proxies failed');
+}
+
 export interface TMDBMovie {
   id: number;
   title: string;
@@ -53,13 +92,8 @@ export async function searchMovie(title: string, year?: string): Promise<TMDBMov
       params.append('year', year);
     }
 
-    const response = await fetch(`${TMDB_BASE_URL}/search/movie?${params}`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    });
+    const url = `${TMDB_BASE_URL}/search/movie?${params}`;
+    const response = await fetchWithProxy(url);
     
     if (!response.ok) {
       console.error(`TMDB API error for "${title}": ${response.status}`);
@@ -85,16 +119,8 @@ export async function searchMovie(title: string, year?: string): Promise<TMDBMov
  */
 export async function getMovieCredits(movieId: number): Promise<TMDBCredits | null> {
   try {
-    const response = await fetch(
-      `${TMDB_BASE_URL}/movie/${movieId}/credits?api_key=${TMDB_API_KEY}`,
-      {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      }
-    );
+    const url = `${TMDB_BASE_URL}/movie/${movieId}/credits?api_key=${TMDB_API_KEY}`;
+    const response = await fetchWithProxy(url);
 
     if (!response.ok) {
       console.error(`TMDB API error for credits ${movieId}: ${response.status}`);
@@ -156,13 +182,8 @@ export async function discoverRandomMovies(count: number = 10): Promise<TMDBMovi
       page: randomPage.toString()
     });
 
-    const response = await fetch(`${TMDB_BASE_URL}/discover/movie?${params}`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    });
+    const url = `${TMDB_BASE_URL}/discover/movie?${params}`;
+    const response = await fetchWithProxy(url);
     
     if (!response.ok) {
       console.error(`TMDB discover API error: ${response.status}`);
@@ -185,16 +206,8 @@ export async function discoverRandomMovies(count: number = 10): Promise<TMDBMovi
  */
 export async function getTrendingMovies(): Promise<TMDBMovie[]> {
   try {
-    const response = await fetch(
-      `${TMDB_BASE_URL}/trending/movie/week?api_key=${TMDB_API_KEY}`,
-      {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      }
-    );
+    const url = `${TMDB_BASE_URL}/trending/movie/week?api_key=${TMDB_API_KEY}`;
+    const response = await fetchWithProxy(url);
 
     if (!response.ok) {
       console.error(`TMDB trending API error: ${response.status}`);
