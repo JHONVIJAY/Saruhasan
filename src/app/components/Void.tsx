@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import { PREMIUM_SLIDESHOW_MOVIES, TOTAL_FILMS_WATCHED, Movie } from "../lib/movies";
 import { Film, Sparkles, Play, Shuffle, RefreshCw } from "lucide-react";
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, FreeMode } from 'swiper/modules';
+import { Autoplay, FreeMode, Navigation, Pagination, EffectCoverflow } from 'swiper/modules';
 import { useMoviePosters, MovieWithPoster } from '../lib/useMoviePosters';
 import { discoverRandomMovies, getPosterUrl, getBackdropUrl, getGenreName, getMovieCredits, findDirector, TMDBMovie } from '../lib/tmdb';
 import { getRatingDisplay, generateMovieId } from '../lib/movies-enhanced';
@@ -14,6 +14,8 @@ import { YouTubeDownloader } from './YouTubeDownloader';
 import 'swiper/css';
 import 'swiper/css/free-mode';
 import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import 'swiper/css/effect-coverflow';
 
 // Movie poster card component
 function MoviePoster({ movie, index, disableHoverEffect = false }: { movie: Movie; index: number; disableHoverEffect?: boolean }) {
@@ -25,15 +27,15 @@ function MoviePoster({ movie, index, disableHoverEffect = false }: { movie: Movi
 
   return (
     <div
-      className="w-full h-full group/card perspective-1000"
+      className="w-full h-full group/card"
     >
       {/* Main Card Container with CSS-only Animations for Performance */}
       <div
         onClick={handleClick}
         className={`
-          relative w-full aspect-[2/3] rounded-2xl overflow-hidden cursor-pointer isolate bg-neutral-900
+          relative w-full aspect-[2/3] rounded-2xl overflow-hidden cursor-pointer bg-neutral-900
           transition-all duration-500 ease-out transform-gpu
-          ${!disableHoverEffect ? 'hover:scale-105 hover:-translate-y-3 hover:shadow-[0_32px_64px_-12px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.1)]' : ''}
+          ${!disableHoverEffect ? 'hover:-translate-y-2 hover:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.15),0_0_32px_rgba(14,165,233,0.2)]' : ''}
           shadow-[0_4px_16px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.03)]
         `}
       >
@@ -669,6 +671,10 @@ export function Void() {
                     key={`desktop-swiper-${postersLoading ? 'loading' : 'loaded'}`}
                     spaceBetween={24}
                     slidesPerView={4}
+                    pagination={{
+                      clickable: true,
+                      dynamicBullets: true,
+                    }}
                     breakpoints={{
                       768: { slidesPerView: 3, spaceBetween: 20 },
                       1024: { slidesPerView: 4, spaceBetween: 24 },
@@ -676,14 +682,20 @@ export function Void() {
                       1536: { slidesPerView: 6, spaceBetween: 32 },
                     }}
                     loop={hasEnoughSlides}
-                    speed={800}
+                    speed={600}
                     autoplay={{
                       delay: 4000,
                       disableOnInteraction: false,
                       pauseOnMouseEnter: true,
                     }}
-                    modules={[Autoplay]}
-                    className="!pb-12 !px-4"
+                    touchRatio={1.5}
+                    touchAngle={45}
+                    grabCursor={true}
+                    resistance={true}
+                    resistanceRatio={0.85}
+                    threshold={10}
+                    modules={[Autoplay, Pagination]}
+                    className="!pb-16 !px-4 desktop-poster-swiper"
                   >
                     {displayMovies.map((movie, index) => (
                       <SwiperSlide key={`desktop-${movie.id}-${index}`}>
