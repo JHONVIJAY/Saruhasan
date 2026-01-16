@@ -702,9 +702,6 @@ export function Void() {
         
         {/* Movie Suggester Card */}
         <MovieSuggesterCard movies={displayMovies} />
-
-        {/* YouTube Downloader */}
-        <YouTubeDownloader />
         
         {/* Bottom Decoration */}
         <div className="container mx-auto px-6 md:px-12 mt-24">

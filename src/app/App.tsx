@@ -7,7 +7,10 @@ import { Footer } from "./components/Footer";
 import { ReactLenis } from "lenis/react";
 import { Home } from "./pages/Home";
 import { VoidPage } from "./pages/VoidPage";
+import { AdminLogin } from "./pages/AdminLogin";
+import { AdminDashboard } from "./pages/AdminDashboard";
 import { useEffect } from "react";
+import { Toaster } from "sonner";
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
@@ -52,20 +55,36 @@ export default function App() {
     <ReactLenis root options={lenisOptions}>
       <BrowserRouter>
         <ScrollToTop />
+        <Toaster position="top-right" theme="dark" />
         <div className="relative min-h-screen bg-[#050505] text-[#EAEAEA] font-sans selection:bg-[#FFFFFF] selection:text-black md:cursor-none" style={{ position: 'relative' }}>
           <Preloader />
           <CustomCursor />
           <Grain />
-          <NavbarMix />
           
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/void" element={<VoidPage />} />
+            {/* Admin Routes (No Navbar/Footer) */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            
+            {/* Public Routes (With Navbar/Footer) */}
+            <Route path="/" element={
+              <>
+                <NavbarMix />
+                <Home />
+                <Footer />
+              </>
+            } />
+            <Route path="/void" element={
+              <>
+                <NavbarMix />
+                <VoidPage />
+                <Footer />
+              </>
+            } />
+            
             {/* Catch-all route for 404s */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-          
-          <Footer />
         </div>
       </BrowserRouter>
     </ReactLenis>

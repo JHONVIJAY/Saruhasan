@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { resumeData } from "../data/resume";
 
 const projectImages = [
@@ -132,162 +133,167 @@ function ProjectItem({
 }
 
 export function WorkGrid() {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  
-  const containerRef = useRef<HTMLDivElement>(null);
+    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+    const navigate = useNavigate();
 
-  return (
-    <section id="works" ref={containerRef} className="relative bg-[#050505] text-white py-20 md:py-40 z-20 scroll-mt-24">
-      
-      <div className="container mx-auto px-4 md:px-8 lg:px-12">
-        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24">
-          
-          {/* Mobile Header */}
-          <div className="lg:hidden mb-8">
-             <SplitText 
-                 text="THE" 
-                 className="text-[13vw] font-black uppercase tracking-tighter leading-[0.85] text-white" 
-             />
-             <SplitText 
-                 text="ARCHIVE" 
-                 className="text-[13vw] font-black uppercase tracking-tighter leading-[0.85] text-white" 
-             />
-             <div className="w-16 h-1 bg-sky-500 mt-6 mb-8" />
-             <p className="text-white/60 text-lg leading-relaxed font-light">
-                A curated selection of engineering challenges and digital experiences. Focusing on stability, performance, and monolithic design.
-             </p>
-          </div>
+    const containerRef = useRef<HTMLDivElement>(null);
 
-          {/* Sticky Sidebar / Preview Area (Desktop Only) */}
-          <div className="hidden lg:block lg:w-5/12 relative">
-             <div className="sticky top-32 h-[calc(100vh-160px)] min-h-[500px] max-h-[800px] w-full flex flex-col justify-between">
-                
-                <div className="relative w-full h-full">
-                    <AnimatePresence mode="wait">
-                        {hoveredIndex === null ? (
-                            <motion.div 
-                                key="default"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.5 }}
-                                className="absolute inset-0 flex flex-col justify-between"
-                            >
-                                <div className="relative">
-                                    <div className="flex items-center gap-4 mb-8">
-                                        <div className="w-2 h-2 bg-sky-500" />
-                                        <span className="font-mono text-sm uppercase tracking-[0.2em] text-white/50">
-                                            Selected Works
-                                        </span>
-                                    </div>
-                                    <SplitText 
-                                        text="THE" 
-                                        className="text-6xl xl:text-8xl font-black uppercase tracking-tighter leading-[0.85] text-white" 
-                                    />
-                                    <SplitText 
-                                        text="ARCHIVE" 
-                                        className="text-6xl xl:text-8xl font-black uppercase tracking-tighter leading-[0.85] text-white" 
-                                    />
-                                    
-                                    {/* Decorative Circle */}
-                                    <div className="absolute top-0 right-0 w-6 h-6 rounded-full border border-white/80" />
-                                </div>
-                                
-                                <div className="max-w-sm">
-                                    <p className="text-white/50 text-lg leading-relaxed font-light mb-12">
-                                        A curated selection of engineering challenges and digital experiences. Focusing on stability, performance, and monolithic design.
-                                    </p>
-                                    
-                                    {/* Visual Project Index */}
-                                    <div className="grid grid-cols-2 gap-x-8 gap-y-4 border-t border-white/10 pt-8">
-                                        {resumeData.projects.map((p, i) => (
-                                            <div 
-                                                key={i} 
-                                                className="flex items-center gap-3 opacity-50 hover:opacity-100 cursor-pointer transition-opacity duration-300"
-                                                onMouseEnter={() => setHoveredIndex(i)}
-                                                onClick={() => document.getElementById(`project-${i}`)?.scrollIntoView({ behavior: 'smooth' })}
-                                            >
-                                                <span className="font-mono text-xs text-sky-500">0{i + 1}</span>
-                                                <span className="font-bold text-xs text-white uppercase tracking-wider truncate">
-                                                    {p.title}
-                                                </span>
+    return (
+        <section id="works" ref={containerRef} className="relative bg-[#050505] text-white py-20 md:py-40 z-20 scroll-mt-24">
+            
+            <div className="container mx-auto px-4 md:px-8 lg:px-12">
+                <div className="flex flex-col lg:flex-row gap-16 lg:gap-24">
+                    
+                    {/* Mobile Header */}
+                    <div className="lg:hidden mb-8">
+                        <SplitText 
+                            text="THE" 
+                            className="text-[13vw] font-black uppercase tracking-tighter leading-[0.85] text-white" 
+                        />
+                        <SplitText 
+                            text="ARCHIVE" 
+                            className="text-[13vw] font-black uppercase tracking-tighter leading-[0.85] text-white" 
+                        />
+                        <div className="w-16 h-1 bg-sky-500 mt-6 mb-8" />
+                        <p className="text-white/60 text-lg leading-relaxed font-light">
+                            A curated selection of engineering challenges and digital experiences. Focusing on stability, performance, and monolithic design.
+                        </p>
+                    </div>
+
+                    {/* Sticky Sidebar / Preview Area (Desktop Only) */}
+                    <div className="hidden lg:block lg:w-5/12 relative">
+                        <div className="sticky top-32 h-[calc(100vh-160px)] min-h-[500px] max-h-[800px] w-full flex flex-col justify-between">
+                            
+                            <div className="relative w-full h-full">
+                                <AnimatePresence mode="wait">
+                                    {hoveredIndex === null ? (
+                                        <motion.div 
+                                            key="default"
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            transition={{ duration: 0.5 }}
+                                            className="absolute inset-0 flex flex-col justify-between"
+                                        >
+                                            <div className="relative">
+                                                <div className="flex items-center gap-4 mb-8">
+                                                    <div className="w-2 h-2 bg-sky-500" />
+                                                    <span className="font-mono text-sm uppercase tracking-[0.2em] text-white/50">
+                                                        Selected Works
+                                                    </span>
+                                                </div>
+                                                <SplitText 
+                                                    text="THE" 
+                                                    className="text-6xl xl:text-8xl font-black uppercase tracking-tighter leading-[0.85] text-white" 
+                                                />
+                                                <SplitText 
+                                                    text="ARCHIVE" 
+                                                    className="text-6xl xl:text-8xl font-black uppercase tracking-tighter leading-[0.85] text-white" 
+                                                />
+                                                
+                                                {/* Decorative Circle - Now clickable to go to admin */}
+                                                <div 
+                                                    onClick={() => navigate('/admin/login')}
+                                                    className="absolute top-0 right-0 w-6 h-6 rounded-full border border-white/80 cursor-pointer hover:bg-sky-500/20 hover:border-sky-500 transition-all duration-300 hover:scale-110"
+                                                    title="Admin Panel"
+                                                />
                                             </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ) : (
-                            <motion.div
-                                key="preview"
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.98 }}
-                                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                                className="absolute inset-0 w-full h-full rounded-sm overflow-hidden bg-[#111]"
+                                            
+                                            <div className="max-w-sm">
+                                                <p className="text-white/50 text-lg leading-relaxed font-light mb-12">
+                                                    A curated selection of engineering challenges and digital experiences. Focusing on stability, performance, and monolithic design.
+                                                </p>
+                                                
+                                                {/* Visual Project Index */}
+                                                <div className="grid grid-cols-2 gap-x-8 gap-y-4 border-t border-white/10 pt-8">
+                                                    {resumeData.projects.map((p, i) => (
+                                                        <div 
+                                                            key={i} 
+                                                            className="flex items-center gap-3 opacity-50 hover:opacity-100 cursor-pointer transition-opacity duration-300"
+                                                            onMouseEnter={() => setHoveredIndex(i)}
+                                                            onClick={() => document.getElementById(`project-${i}`)?.scrollIntoView({ behavior: 'smooth' })}
+                                                        >
+                                                            <span className="font-mono text-xs text-sky-500">0{i + 1}</span>
+                                                            <span className="font-bold text-xs text-white uppercase tracking-wider truncate">
+                                                                {p.title}
+                                                            </span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    ) : (
+                                        <motion.div
+                                            key="preview"
+                                            initial={{ opacity: 0, scale: 0.95 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            exit={{ opacity: 0, scale: 0.98 }}
+                                            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                                            className="absolute inset-0 w-full h-full rounded-sm overflow-hidden bg-[#111]"
+                                        >
+                                            <img 
+                                                src={projectImages[hoveredIndex % projectImages.length]} 
+                                                alt="Project Preview" 
+                                                className="w-full h-full object-cover opacity-80"
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                                            
+                                            <div className="absolute bottom-0 left-0 p-8 w-full">
+                                                <motion.div 
+                                                    initial={{ y: 20, opacity: 0 }}
+                                                    animate={{ y: 0, opacity: 1 }}
+                                                    transition={{ delay: 0.1 }}
+                                                    className="flex justify-between items-end"
+                                                >
+                                                    <div>
+                                                        <span className="font-mono text-sky-400 text-xs tracking-widest uppercase mb-2 block">
+                                                            {resumeData.projects[hoveredIndex].period}
+                                                        </span>
+                                                        <h4 className="text-3xl font-bold text-white uppercase">
+                                                            {resumeData.projects[hoveredIndex].title}
+                                                        </h4>
+                                                    </div>
+                                                    <div className="h-10 w-10 rounded-full bg-white text-black flex items-center justify-center">
+                                                        <ArrowUpRight size={20} />
+                                                    </div>
+                                                </motion.div>
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    {/* Project List */}
+                    <div className="lg:w-7/12 lg:pt-12">
+                        <div className="flex flex-col">
+                            {resumeData.projects.map((project, index) => (
+                               <ProjectItem 
+                                    key={index} 
+                                    project={project} 
+                                    index={index} 
+                                    setHoveredIndex={setHoveredIndex}
+                                    hoveredIndex={hoveredIndex}
+                               />
+                            ))}
+                        </div>
+                        
+                        <div className="lg:hidden mt-12 flex justify-center">
+                            <a 
+                                href={resumeData.social.github} 
+                                className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-white/5 border border-white/10 rounded-full overflow-hidden transition-all duration-300 active:scale-95"
                             >
-                                <img 
-                                    src={projectImages[hoveredIndex % projectImages.length]} 
-                                    alt="Project Preview" 
-                                    className="w-full h-full object-cover opacity-80"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                                
-                                <div className="absolute bottom-0 left-0 p-8 w-full">
-                                    <motion.div 
-                                        initial={{ y: 20, opacity: 0 }}
-                                        animate={{ y: 0, opacity: 1 }}
-                                        transition={{ delay: 0.1 }}
-                                        className="flex justify-between items-end"
-                                    >
-                                        <div>
-                                            <span className="font-mono text-sky-400 text-xs tracking-widest uppercase mb-2 block">
-                                                {resumeData.projects[hoveredIndex].period}
-                                            </span>
-                                            <h4 className="text-3xl font-bold text-white uppercase">
-                                                {resumeData.projects[hoveredIndex].title}
-                                            </h4>
-                                        </div>
-                                        <div className="h-10 w-10 rounded-full bg-white text-black flex items-center justify-center">
-                                            <ArrowUpRight size={20} />
-                                        </div>
-                                    </motion.div>
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                                <span className="font-mono text-xs text-white uppercase tracking-widest relative z-10 group-hover:text-black transition-colors">View Full Archive</span>
+                                <ArrowUpRight className="w-4 h-4 text-white relative z-10 group-hover:text-black transition-colors" />
+                                <div className="absolute inset-0 bg-white translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                            </a>
+                        </div>
+                    </div>
+
                 </div>
-
-             </div>
-          </div>
-
-          {/* Project List */}
-          <div className="lg:w-7/12 lg:pt-12">
-             <div className="flex flex-col">
-                {resumeData.projects.map((project, index) => (
-                   <ProjectItem 
-                        key={index} 
-                        project={project} 
-                        index={index} 
-                        setHoveredIndex={setHoveredIndex}
-                        hoveredIndex={hoveredIndex}
-                   />
-                ))}
-             </div>
-             
-             <div className="lg:hidden mt-12 flex justify-center">
-                <a 
-                    href={resumeData.social.github} 
-                    className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-white/5 border border-white/10 rounded-full overflow-hidden transition-all duration-300 active:scale-95"
-                >
-                    <span className="font-mono text-xs text-white uppercase tracking-widest relative z-10 group-hover:text-black transition-colors">View Full Archive</span>
-                    <ArrowUpRight className="w-4 h-4 text-white relative z-10 group-hover:text-black transition-colors" />
-                    <div className="absolute inset-0 bg-white translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-                </a>
-             </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-  );
+            </div>
+        </section>
+    );
 }
