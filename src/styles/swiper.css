@@ -1,43 +1,5 @@
 /* Swiper Custom Styles for Void Section */
 
-/* Mobile Poster Swiper - Enhanced Drag & Visual Feedback */
-.mobile-poster-swiper {
-  overflow: visible !important;
-  padding: 20px 0 !important;
-}
-
-.mobile-poster-swiper .swiper-wrapper {
-  align-items: center;
-}
-
-/* Center slide scale effect for mobile */
-.mobile-poster-swiper .swiper-slide {
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-  transform: scale(0.85) !important;
-  opacity: 0.5 !important;
-}
-
-.mobile-poster-swiper .swiper-slide-active {
-  transform: scale(1) !important;
-  opacity: 1 !important;
-  z-index: 10 !important;
-}
-
-.mobile-poster-swiper .swiper-slide-next,
-.mobile-poster-swiper .swiper-slide-prev {
-  opacity: 0.7 !important;
-  transform: scale(0.92) !important;
-}
-
-/* Smooth drag indicator */
-.mobile-poster-swiper.swiper-free-mode {
-  cursor: grab !important;
-}
-
-.mobile-poster-swiper.swiper-free-mode:active {
-  cursor: grabbing !important;
-}
-
 /* Slideshow Navigation Buttons */
 .swiper-button-next,
 .swiper-button-prev {
@@ -107,23 +69,6 @@
 .swiper-pagination-bullet-active-next {
   background: rgba(14, 165, 233, 0.5) !important;
   width: 12px !important;
-}
-
-/* Enhance touch feedback with glow effect */
-.mobile-poster-swiper .swiper-slide-active::before {
-  content: '';
-  position: absolute;
-  inset: -10px;
-  background: radial-gradient(circle at center, rgba(14, 165, 233, 0.15), transparent 70%);
-  border-radius: 24px;
-  pointer-events: none;
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.mobile-poster-swiper .swiper-slide-active::before {
-  opacity: 1;
 }
 
 /* Mobile Responsive */
