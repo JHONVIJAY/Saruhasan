@@ -1,7 +1,13 @@
-import { motion, useScroll, useTransform } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  AnimatePresence,
+} from "framer-motion";
 import heroImg from "../../assets/0575f999a9ea5865df7e385148b08517b640dc26.png";
 import { ArrowDown } from "lucide-react";
 import { BackgroundRipple } from "./ui/BackgroundRipple";
+import { useState, useRef } from "react";
 
 const textVariants = {
   hidden: { opacity: 0, y: 100 },
@@ -16,12 +22,91 @@ const textVariants = {
   }),
 };
 
+<<<<<<< HEAD
 function SplitText({ text, className, stroke = false }: { text: string, className?: string, stroke?: boolean }) {
+=======
+// Pro animation variants for name toggle
+const nameToggleVariants = {
+  initial: (direction: number) => ({
+    opacity: 0,
+    y: direction > 0 ? 50 : -50,
+    scale: 0.9,
+    filter: "blur(10px)",
+  }),
+  animate: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    filter: "blur(0px)",
+    transition: {
+      duration: 0.8,
+      ease: [0.16, 1, 0.3, 1], // Professional easing curve
+    },
+  },
+  exit: (direction: number) => ({
+    opacity: 0,
+    y: direction > 0 ? -50 : 50,
+    scale: 0.9,
+    filter: "blur(10px)",
+    transition: {
+      duration: 0.6,
+      ease: [0.7, 0, 0.84, 0],
+    },
+  }),
+};
+
+const charVariants = {
+  initial: {
+    opacity: 0,
+    y: 20,
+    scale: 0.8,
+  },
+  animate: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      delay: i * 0.04,
+      duration: 0.5,
+      ease: [0.16, 1, 0.3, 1],
+    },
+  }),
+  exit: (i: number) => ({
+    opacity: 0,
+    y: -20,
+    scale: 0.8,
+    transition: {
+      delay: i * 0.02,
+      duration: 0.4,
+      ease: [0.7, 0, 0.84, 0],
+    },
+  }),
+};
+
+function SplitText({
+  text,
+  className,
+  stroke = false,
+  onClick,
+}: {
+  text: string;
+  className?: string;
+  stroke?: boolean;
+  onClick?: () => void;
+}) {
+>>>>>>> 0a3d873775b81d04fd7e8b41c753ed4bf1e699d7
   return (
     <motion.h1 
       initial="hidden"
       animate="visible"
-      className={`${className} flex flex-wrap`}
+      className={`${className} flex flex-wrap select-none`}
+      onClick={onClick}
+      style={{
+        userSelect: "none",
+        WebkitUserSelect: "none",
+        MozUserSelect: "none",
+        msUserSelect: "none",
+      }}
     >
       {text.split("").map((char, i) => (
          <motion.span
@@ -38,10 +123,80 @@ function SplitText({ text, className, stroke = false }: { text: string, classNam
   );
 }
 
+function AnimatedName({
+  text,
+  stroke = false,
+  onClick,
+  direction,
+}: {
+  text: string;
+  stroke?: boolean;
+  onClick?: () => void;
+  direction: number;
+}) {
+  return (
+    <motion.h1
+      custom={direction}
+      variants={nameToggleVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      className="text-[14vw] md:text-[10vw] leading-[0.85] font-black tracking-tighter uppercase flex flex-wrap select-none"
+      onClick={onClick}
+      style={{
+        userSelect: "none",
+        WebkitUserSelect: "none",
+        MozUserSelect: "none",
+        msUserSelect: "none",
+      }}
+    >
+      {text.split("").map((char, i) => (
+        <motion.span
+          key={`${char}-${i}`}
+          custom={i}
+          variants={charVariants}
+          className="inline-block"
+          style={
+            stroke
+              ? {
+                  WebkitTextStroke: "1px rgba(255, 255, 255, 0.8)",
+                  color: "transparent",
+                }
+              : {}
+          }
+        >
+          {char === " " ? "\u00A0" : char}
+        </motion.span>
+      ))}
+    </motion.h1>
+  );
+}
+
 export function HeroSolid() {
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 1000], [0, 400]);
   const opacity = useTransform(scrollY, [0, 500], [1, 0]);
+
+  // State for name toggle
+  const [displayName, setDisplayName] = useState<"JOHN" | "ANGEL">("JOHN");
+  const clickCountRef = useRef(0);
+
+  // Zero-width space for padding (U+200B)
+  const ZERO_WIDTH_SPACE = "\u200B";
+
+  // Pad "JOHN" to 5 characters to match "ANGEL"
+  const paddedName =
+    displayName === "JOHN" ? `JOHN${ZERO_WIDTH_SPACE}` : "ANGEL";
+
+  const handleNameClick = () => {
+    clickCountRef.current += 1;
+
+    // Toggle after 3 clicks
+    if (clickCountRef.current === 3) {
+      setDisplayName((prev) => (prev === "JOHN" ? "ANGEL" : "JOHN"));
+      clickCountRef.current = 0;
+    }
+  };
 
   return (
     <section 
@@ -127,6 +282,7 @@ export function HeroSolid() {
              </motion.div>
            </div>
 
+<<<<<<< HEAD
            <div className="pointer-events-none">
                <SplitText 
                  text="JOHN" 
@@ -134,6 +290,19 @@ export function HeroSolid() {
                  className="text-[14vw] md:text-[10vw] leading-[0.85] font-black tracking-tighter uppercase"
                />
            </div>
+=======
+        <div className="pointer-events-auto select-none">
+          <AnimatePresence mode="wait">
+            <AnimatedName
+              key={displayName}
+              text={paddedName}
+              stroke={true}
+              onClick={handleNameClick}
+              direction={displayName === "JOHN" ? 1 : -1}
+            />
+          </AnimatePresence>
+        </div>
+>>>>>>> 0a3d873775b81d04fd7e8b41c753ed4bf1e699d7
       </div>
 
     </section>

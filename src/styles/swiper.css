@@ -1,65 +1,168 @@
 /* Swiper Custom Styles for Void Section */
 
+<<<<<<< HEAD
 /* Slideshow Navigation Buttons */
+=======
+/* Desktop Swiper - Allow cards to lift without clipping + Performance Optimization */
+.desktop-poster-swiper {
+  overflow: visible !important;
+  will-change: transform;
+}
+
+.desktop-poster-swiper .swiper-wrapper {
+  overflow: visible !important;
+  will-change: transform;
+  transform: translate3d(0, 0, 0); /* Force GPU acceleration */
+}
+
+.desktop-poster-swiper .swiper-slide {
+  overflow: visible !important;
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0); /* Force GPU acceleration */
+  backface-visibility: hidden; /* Prevent flicker */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Mobile Poster Swiper - Enhanced Drag & Visual Feedback with Performance */
+.mobile-poster-swiper {
+  overflow: visible !important;
+  padding: 32px 0 !important;
+  will-change: transform;
+}
+
+.mobile-poster-swiper .swiper-wrapper {
+  align-items: center;
+  will-change: transform;
+  transform: translate3d(0, 0, 0); /* Force GPU acceleration */
+}
+
+/* Center slide scale effect for mobile - OPTIMIZED */
+.mobile-poster-swiper .swiper-slide {
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s ease-out !important;
+  transform: scale(0.85) translateY(8px) translate3d(0, 0, 0) !important;
+  opacity: 0.5 !important;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.mobile-poster-swiper .swiper-slide-active {
+  transform: scale(1) translateY(0) translate3d(0, 0, 0) !important;
+  opacity: 1 !important;
+  z-index: 10 !important;
+}
+
+.mobile-poster-swiper .swiper-slide-next,
+.mobile-poster-swiper .swiper-slide-prev {
+  opacity: 0.65 !important;
+  transform: scale(0.9) translateY(4px) translate3d(0, 0, 0) !important;
+}
+
+/* Smooth drag indicator */
+.mobile-poster-swiper.swiper-free-mode {
+  cursor: grab !important;
+}
+
+.mobile-poster-swiper.swiper-free-mode:active {
+  cursor: grabbing !important;
+}
+
+/* Desktop Slideshow Navigation Buttons */
+>>>>>>> 0a3d873775b81d04fd7e8b41c753ed4bf1e699d7
 .swiper-button-next,
 .swiper-button-prev {
-  width: 48px !important;
-  height: 48px !important;
-  background: rgba(0, 0, 0, 0.6) !important;
-  backdrop-filter: blur(12px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 12px !important;
-  transition: all 0.3s ease !important;
+  width: 56px !important;
+  height: 56px !important;
+  background: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 16px !important;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  opacity: 0 !important;
+  transform: translateX(0) scale(0.9) !important;
+}
+
+/* Show navigation on parent hover */
+.swiper:hover .swiper-button-next,
+.swiper:hover .swiper-button-prev {
+  opacity: 1 !important;
 }
 
 .swiper-button-next:hover,
 .swiper-button-prev:hover {
-  background: rgba(14, 165, 233, 0.3) !important;
-  border-color: rgba(14, 165, 233, 0.5) !important;
-  transform: scale(1.1) !important;
+  background: rgba(14, 165, 233, 0.25) !important;
+  border-color: rgba(14, 165, 233, 0.4) !important;
+  transform: translateX(0) scale(1) !important;
+  box-shadow: 0 8px 24px rgba(14, 165, 233, 0.2) !important;
 }
 
 .swiper-button-next::after,
 .swiper-button-prev::after {
-  font-size: 18px !important;
+  font-size: 20px !important;
   font-weight: 900 !important;
-  color: rgba(255, 255, 255, 0.9) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
 }
 
 .swiper-button-next {
-  right: 20px !important;
+  right: 24px !important;
 }
 
 .swiper-button-prev {
-  left: 20px !important;
+  left: 24px !important;
 }
 
-/* Pagination Bullets */
+.swiper-button-next:hover {
+  transform: translateX(2px) scale(1) !important;
+}
+
+.swiper-button-prev:hover {
+  transform: translateX(-2px) scale(1) !important;
+}
+
+/* Disabled state */
+.swiper-button-disabled {
+  opacity: 0.3 !important;
+  cursor: not-allowed !important;
+}
+
+.swiper-button-disabled:hover {
+  background: rgba(0, 0, 0, 0.8) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  transform: translateX(0) scale(0.9) !important;
+  box-shadow: none !important;
+}
+
+/* Pagination Bullets - Premium Style */
 .swiper-pagination {
   bottom: 0px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
 }
 
 .swiper-pagination-bullet {
-  width: 10px !important;
-  height: 10px !important;
-  background: rgba(255, 255, 255, 0.2) !important;
+  width: 8px !important;
+  height: 8px !important;
+  background: rgba(255, 255, 255, 0.15) !important;
   opacity: 1 !important;
-  transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
-  margin: 0 6px !important;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  margin: 0 !important;
+  border-radius: 9999px !important;
 }
 
 .swiper-pagination-bullet:hover {
-  background: rgba(255, 255, 255, 0.4) !important;
-  transform: scale(1.2) !important;
+  background: rgba(255, 255, 255, 0.35) !important;
+  transform: scale(1.3) !important;
 }
 
 .swiper-pagination-bullet-active {
   width: 32px !important;
-  border-radius: 5px !important;
-  background: linear-gradient(90deg, rgba(14, 165, 233, 1) 0%, rgba(59, 130, 246, 1) 100%) !important;
-  box-shadow: 0 0 16px rgba(14, 165, 233, 0.6), 0 4px 12px rgba(14, 165, 233, 0.3) !important;
+  border-radius: 9999px !important;
+  background: linear-gradient(90deg, rgba(14, 165, 233, 0.9) 0%, rgba(59, 130, 246, 0.9) 100%) !important;
+  box-shadow: 0 0 20px rgba(14, 165, 233, 0.5), 0 4px 16px rgba(14, 165, 233, 0.3) !important;
 }
 
+<<<<<<< HEAD
 /* Dynamic bullets for pagination */
 .swiper-pagination-bullet-active-main {
   background: linear-gradient(90deg, rgba(14, 165, 233, 1) 0%, rgba(59, 130, 246, 1) 100%) !important;
@@ -69,26 +172,82 @@
 .swiper-pagination-bullet-active-next {
   background: rgba(14, 165, 233, 0.5) !important;
   width: 12px !important;
+=======
+/* Enhance touch feedback with glow effect on mobile */
+.mobile-poster-swiper .swiper-slide-active::before {
+  content: '';
+  position: absolute;
+  inset: -12px;
+  background: radial-gradient(circle at center, rgba(14, 165, 233, 0.18), transparent 70%);
+  border-radius: 24px;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 1;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+>>>>>>> 0a3d873775b81d04fd7e8b41c753ed4bf1e699d7
 }
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .swiper-button-next,
   .swiper-button-prev {
-    width: 40px !important;
-    height: 40px !important;
+    display: none !important; /* Hide navigation on mobile */
+  }
+
+  .swiper-pagination {
+    bottom: -8px !important;
+  }
+
+  .swiper-pagination-bullet {
+    width: 6px !important;
+    height: 6px !important;
+  }
+
+  .swiper-pagination-bullet-active {
+    width: 24px !important;
+  }
+}
+
+/* Tablet Responsive */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .swiper-button-next,
+  .swiper-button-prev {
+    width: 48px !important;
+    height: 48px !important;
   }
 
   .swiper-button-next::after,
   .swiper-button-prev::after {
-    font-size: 16px !important;
+    font-size: 18px !important;
   }
 
   .swiper-button-next {
-    right: 10px !important;
+    right: 16px !important;
   }
 
   .swiper-button-prev {
-    left: 10px !important;
+    left: 16px !important;
+  }
+}
+
+/* Large Desktop - Make navigation more prominent */
+@media (min-width: 1920px) {
+  .swiper-button-next,
+  .swiper-button-prev {
+    width: 64px !important;
+    height: 64px !important;
+  }
+
+  .swiper-button-next::after,
+  .swiper-button-prev::after {
+    font-size: 22px !important;
+  }
+
+  .swiper-button-next {
+    right: 32px !important;
+  }
+
+  .swiper-button-prev {
+    left: 32px !important;
   }
 }

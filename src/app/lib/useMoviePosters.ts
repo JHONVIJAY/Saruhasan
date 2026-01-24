@@ -45,12 +45,12 @@ export function useMoviePosters(movies: Omit<EnhancedMovie, 'poster' | 'backdrop
       let hasUpdates = false;
 
       // Process in batches to avoid overwhelming the API
-      const batchSize = 10;
+      const batchSize = 5; // Reduced batch size for better reliability
       for (let i = 0; i < movies.length; i += batchSize) {
         if (!isMounted) break;
 
         const batch = movies.slice(i, i + batchSize);
-        const batchResults = await Promise.all(
+        const batchResults = await Promise.allSettled(
           batch.map(async (movie, index) => {
             const globalIndex = i + index;
             // Skip if already loaded (from cache)
@@ -88,10 +88,11 @@ export function useMoviePosters(movies: Omit<EnhancedMovie, 'poster' | 'backdrop
         // Update the local copy with new results
         batchResults.forEach((result, index) => {
           const globalIndex = i + index;
-          if (globalIndex < currentMovies.length) {
+          if (globalIndex < currentMovies.length && result.status === 'fulfilled') {
+            const movieResult = result.value;
             // Only mark as update if something actually changed (loading -> loaded)
-            if (currentMovies[globalIndex].isLoading !== result.isLoading) {
-              currentMovies[globalIndex] = result;
+            if (currentMovies[globalIndex].isLoading !== movieResult.isLoading) {
+              currentMovies[globalIndex] = movieResult;
               hasUpdates = true;
             }
           }
@@ -103,16 +104,9 @@ export function useMoviePosters(movies: Omit<EnhancedMovie, 'poster' | 'backdrop
           hasUpdates = false; // Reset for next batch
         }
 
-        // Rate limiting: wait 250ms between batches ONLY if we actually fetched something
-        // If everything was cached, this loop runs very fast
-        const fetchedAny = batchResults.some(r => r.isLoading === false && movies[i + batchResults.indexOf(r)] /* check original */); 
-        // Logic is tricky here. Simply: if we did network requests, wait.
-        // But `fetchMoviePoster` handles network/cache internally too.
-        // We'll keep the delay to be safe, but maybe shorter if all cached? 
-        // Actually `fetchMoviePoster` is async but fast if cached.
-        
+        // Shorter delay between batches - only 100ms
         if (i + batchSize < movies.length) {
-           await new Promise(resolve => setTimeout(resolve, 50)); // Reduced delay
+           await new Promise(resolve => setTimeout(resolve, 100));
         }
       }
 
