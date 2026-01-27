@@ -1,8 +1,5 @@
 /* Swiper Custom Styles for Void Section */
 
-<<<<<<< HEAD
-/* Slideshow Navigation Buttons */
-=======
 /* Desktop Swiper - Allow cards to lift without clipping + Performance Optimization */
 .desktop-poster-swiper {
   overflow: visible !important;
@@ -67,7 +64,6 @@
 }
 
 /* Desktop Slideshow Navigation Buttons */
->>>>>>> 0a3d873775b81d04fd7e8b41c753ed4bf1e699d7
 .swiper-button-next,
 .swiper-button-prev {
   width: 56px !important;
@@ -162,7 +158,6 @@
   box-shadow: 0 0 20px rgba(14, 165, 233, 0.5), 0 4px 16px rgba(14, 165, 233, 0.3) !important;
 }
 
-<<<<<<< HEAD
 /* Dynamic bullets for pagination */
 .swiper-pagination-bullet-active-main {
   background: linear-gradient(90deg, rgba(14, 165, 233, 1) 0%, rgba(59, 130, 246, 1) 100%) !important;
@@ -172,7 +167,8 @@
 .swiper-pagination-bullet-active-next {
   background: rgba(14, 165, 233, 0.5) !important;
   width: 12px !important;
-=======
+}
+
 /* Enhance touch feedback with glow effect on mobile */
 .mobile-poster-swiper .swiper-slide-active::before {
   content: '';
@@ -184,7 +180,6 @@
   z-index: -1;
   opacity: 1;
   transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
->>>>>>> 0a3d873775b81d04fd7e8b41c753ed4bf1e699d7
 }
 
 /* Mobile Responsive */

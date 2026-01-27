@@ -17,14 +17,11 @@ const textVariants = {
     transition: {
       delay: i * 0.05,
       duration: 1,
-      ease: [0.22, 1, 0.36, 1],
+      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
     },
   }),
 };
 
-<<<<<<< HEAD
-function SplitText({ text, className, stroke = false }: { text: string, className?: string, stroke?: boolean }) {
-=======
 // Pro animation variants for name toggle
 const nameToggleVariants = {
   initial: (direction: number) => ({
@@ -40,7 +37,7 @@ const nameToggleVariants = {
     filter: "blur(0px)",
     transition: {
       duration: 0.8,
-      ease: [0.16, 1, 0.3, 1], // Professional easing curve
+      ease: [0.16, 1, 0.3, 1] as [number, number, number, number], // Professional easing curve
     },
   },
   exit: (direction: number) => ({
@@ -50,7 +47,7 @@ const nameToggleVariants = {
     filter: "blur(10px)",
     transition: {
       duration: 0.6,
-      ease: [0.7, 0, 0.84, 0],
+      ease: [0.7, 0, 0.84, 0] as [number, number, number, number],
     },
   }),
 };
@@ -68,7 +65,7 @@ const charVariants = {
     transition: {
       delay: i * 0.04,
       duration: 0.5,
-      ease: [0.16, 1, 0.3, 1],
+      ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
     },
   }),
   exit: (i: number) => ({
@@ -78,7 +75,7 @@ const charVariants = {
     transition: {
       delay: i * 0.02,
       duration: 0.4,
-      ease: [0.7, 0, 0.84, 0],
+      ease: [0.7, 0, 0.84, 0] as [number, number, number, number],
     },
   }),
 };
@@ -94,9 +91,8 @@ function SplitText({
   stroke?: boolean;
   onClick?: () => void;
 }) {
->>>>>>> 0a3d873775b81d04fd7e8b41c753ed4bf1e699d7
   return (
-    <motion.h1 
+    <motion.h1
       initial="hidden"
       animate="visible"
       className={`${className} flex flex-wrap select-none`}
@@ -223,7 +219,7 @@ export function HeroSolid() {
           <motion.div 
              initial={{ opacity: 0 }}
              animate={{ opacity: 1 }}
-             transition={{ delay: 0.6, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+             transition={{ delay: 0.6, duration: 1.2, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
              className="mt-4 md:mt-0 md:text-right pointer-events-none"
           >
               <h2 className="text-white font-medium text-base md:text-xl mb-2">The Dual Identity</h2>
@@ -244,7 +240,7 @@ export function HeroSolid() {
              <motion.img 
                 initial={{ scale: 1.2, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
                 src={heroImg} 
                 alt="Saruhasan Sankar" 
                 className="w-full h-full object-cover object-center"
@@ -258,7 +254,7 @@ export function HeroSolid() {
               <motion.div 
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ delay: 1, duration: 0.8, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
                 className="bg-white/10 backdrop-blur-md px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-white/10"
               >
                   <span className="text-[10px] md:text-xs font-mono text-white uppercase tracking-widest">
@@ -274,7 +270,7 @@ export function HeroSolid() {
              <motion.div
                initial={{ opacity: 0 }}
                animate={{ opacity: 1 }}
-               transition={{ delay: 1, duration: 1, ease: [0.22, 1, 0.36, 1] }}
+               transition={{ delay: 1, duration: 1, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
                className="flex gap-3 md:gap-4 items-center"
              >
                <div className="w-2 h-2 bg-sky-500 rounded-full animate-pulse" />
@@ -282,15 +278,6 @@ export function HeroSolid() {
              </motion.div>
            </div>
 
-<<<<<<< HEAD
-           <div className="pointer-events-none">
-               <SplitText 
-                 text="JOHN" 
-                 stroke={true}
-                 className="text-[14vw] md:text-[10vw] leading-[0.85] font-black tracking-tighter uppercase"
-               />
-           </div>
-=======
         <div className="pointer-events-auto select-none">
           <AnimatePresence mode="wait">
             <AnimatedName
@@ -302,7 +289,6 @@ export function HeroSolid() {
             />
           </AnimatePresence>
         </div>
->>>>>>> 0a3d873775b81d04fd7e8b41c753ed4bf1e699d7
       </div>
 
     </section>

@@ -12,13 +12,11 @@ import { YouTubeDownloader } from './YouTubeDownloader';
 
 // Import Swiper styles
 import 'swiper/css';
-<<<<<<< HEAD
-=======
+
 import 'swiper/css/free-mode';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import 'swiper/css/effect-coverflow';
->>>>>>> 0a3d873775b81d04fd7e8b41c753ed4bf1e699d7
 
 // Movie poster card component
 function MoviePoster({ movie, index, disableHoverEffect = false }: { movie: Movie; index: number; disableHoverEffect?: boolean }) {
@@ -625,34 +623,6 @@ export function Void() {
                 <>
                   {/* Mobile Slider */}
                   {isMobile && (
-<<<<<<< HEAD
-                <div className="md:hidden w-full">
-                  <Swiper
-                    key={`mobile-swiper-${postersLoading ? 'loading' : 'loaded'}`}
-                    grabCursor={true}
-                    centeredSlides={true}
-                    slidesPerView={'auto'}
-                    spaceBetween={16}
-                    loop={hasEnoughSlides}
-                    speed={600}
-                    autoplay={{
-                      delay: 3000,
-                      disableOnInteraction: false,
-                    }}
-                    modules={[Autoplay]}
-                    className="w-full !pb-8"
-                  >
-                    {displayMovies.map((movie, index) => (
-                      <SwiperSlide key={`mobile-${movie.id}-${index}`} style={{ width: '240px' }}>
-                        <div className="px-2">
-                          <MoviePoster movie={movie} index={index} disableHoverEffect={true} />
-                        </div>
-                      </SwiperSlide>
-                    ))}
-                  </Swiper>
-                </div>
-              )}
-=======
                     <div className="md:hidden">
                       <Swiper
                         key={`mobile-swiper-${postersLoading ? 'loading' : 'loaded'}`}
@@ -680,7 +650,6 @@ export function Void() {
                       </Swiper>
                     </div>
                   )}
->>>>>>> 0a3d873775b81d04fd7e8b41c753ed4bf1e699d7
 
                   {/* Desktop Slider */}
                   {!isMobile && (
