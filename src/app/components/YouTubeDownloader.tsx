@@ -1,3 +1,3 @@
-export function YouTubeDownloader(props: any) {
+export function YouTubeDownloader() {
   return null;
 }

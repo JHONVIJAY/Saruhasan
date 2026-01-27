@@ -5,7 +5,7 @@ import {
   AnimatePresence,
 } from "framer-motion";
 import heroImg from "../../assets/0575f999a9ea5865df7e385148b08517b640dc26.png";
-import { ArrowDown } from "lucide-react";
+
 import { BackgroundRipple } from "./ui/BackgroundRipple";
 import { useState, useRef } from "react";
 
