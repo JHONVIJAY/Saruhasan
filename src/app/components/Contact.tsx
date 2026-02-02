@@ -1,7 +1,7 @@
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { ArrowUpRight, Copy, Linkedin, Twitter, Github } from "lucide-react";
 import { resumeData } from "../data/resume";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { toast } from "sonner";
 
 const textVariants = {
@@ -40,8 +40,6 @@ function SplitText({ text, className }: { text: string, className?: string }) {
 }
 
 export function Contact() {
-  const [copied, setCopied] = useState(false);
-
   // Magnetic Button Logic
   const ref = useRef<HTMLButtonElement>(null);
   const x = useMotionValue(0);
@@ -63,13 +61,11 @@ export function Contact() {
 
   const copyEmail = () => {
     navigator.clipboard.writeText(resumeData.email);
-    setCopied(true);
     toast.success("Email copied to clipboard");
-    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <footer id="contact" className="h-full w-full bg-zinc-950 flex flex-col justify-between pt-24 pb-12 px-6 md:px-12 overflow-hidden relative">
+    <footer id="contact-cta" className="h-full w-full bg-zinc-950 flex flex-col justify-between pt-24 pb-12 px-6 md:px-12 overflow-hidden relative">
       
       {/* Background Texture */}
       <div className="absolute inset-0 opacity-[0.03]" 

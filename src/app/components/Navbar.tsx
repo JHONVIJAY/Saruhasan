@@ -45,6 +45,8 @@ export function Navbar() {
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 1, delay: 1 }}
+        role="navigation"
+        aria-label="Main navigation"
         className={cn(
           "fixed top-0 left-0 right-0 z-50 px-4 md:px-6 py-4 md:py-6 flex justify-between items-start transition-all duration-700",
           "bg-white/10 backdrop-blur-2xl border-b border-white/30 shadow-xl shadow-black/50",
@@ -78,7 +80,7 @@ export function Navbar() {
 
         {/* Desktop Menu */}
         <div className="bg-white/5 backdrop-blur-sm border border-white/10 px-6 py-2.5 rounded-full hidden md:flex gap-8 items-center">
-            {menuItems.map((item, index) => (
+            {menuItems.map((item) => (
               <a 
                 key={item.href}
                 href={item.href} 
@@ -98,7 +100,7 @@ export function Navbar() {
 
         {/* Mobile Menu Button */}
         <motion.button 
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 setMobileMenuOpen(!mobileMenuOpen);
             }}
@@ -160,7 +162,7 @@ export function Navbar() {
                         ease: [0.22, 1, 0.36, 1],
                         delay: index * 0.1 
                       }}
-                      onClick={(e) => {
+                      onClick={(e: React.MouseEvent) => {
                           e.preventDefault();
                           setMobileMenuOpen(false);
                           setTimeout(() => {

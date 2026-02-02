@@ -192,10 +192,10 @@ export function WorkGrid() {
                                                 />
                                                 
                                                 {/* Decorative Circle - Now clickable to go to admin */}
-                                                <div 
+                                                <button 
                                                     onClick={() => navigate('/admin/login')}
-                                                    className="absolute top-0 right-0 w-6 h-6 rounded-full border border-white/80 cursor-pointer hover:bg-sky-500/20 hover:border-sky-500 transition-all duration-300 hover:scale-110"
-                                                    title="Admin Panel"
+                                                    className="absolute top-0 right-0 w-6 h-6 rounded-full border border-white/80 cursor-pointer hover:bg-sky-500/20 hover:border-sky-500 transition-all duration-300 hover:scale-110 bg-transparent"
+                                                    aria-label="Access admin panel"
                                                 />
                                             </div>
                                             

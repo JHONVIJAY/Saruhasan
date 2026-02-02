@@ -117,7 +117,7 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
           {/* Floating Cursor Button */}
           <motion.div 
             style={{ left: springX, top: springY, opacity: isHovered ? 1 : 0, scale: isHovered ? 1 : 0 }}
-            className="absolute z-30 pointer-events-none w-24 h-24 bg-white rounded-full flex items-center justify-center mix-blend-difference hidden md:flex"
+            className="absolute z-30 pointer-events-none w-24 h-24 bg-white rounded-full items-center justify-center mix-blend-difference hidden md:flex"
           >
              <span className="text-black font-bold text-xs uppercase tracking-widest">View</span>
           </motion.div>

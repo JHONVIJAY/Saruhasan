@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll } from "framer-motion";
 import { ArrowUpRight, MapPin } from "lucide-react";
 import { resumeData } from "../data/resume";
 import { cn } from "../lib/utils";
@@ -39,12 +39,10 @@ function SplitText({ text, className }: { text: string, className?: string }) {
 
 function ExperienceItem({ 
   job, 
-  index, 
-  isLast 
+  index 
 }: { 
   job: any, 
-  index: number, 
-  isLast: boolean 
+  index: number 
 }) {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -57,6 +55,8 @@ function ExperienceItem({
       className="group relative border-t border-white/10 last:border-b"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      role="article"
+      aria-label={`Experience at ${job.company} as ${job.role}`}
     >
       <div className={cn(
           "py-12 md:py-16 grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-baseline transition-all duration-500",
@@ -144,7 +144,7 @@ function ExperienceItem({
 
 export function ExperienceEditorial() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
+  useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
   });
@@ -222,7 +222,6 @@ export function ExperienceEditorial() {
                      key={index} 
                      job={job} 
                      index={index} 
-                     isLast={index === resumeData.experience.length - 1} 
                    />
                 ))}
              </div>
