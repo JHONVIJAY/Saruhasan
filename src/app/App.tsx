@@ -9,6 +9,7 @@ import { Home } from "./pages/Home";
 import { VoidPage } from "./pages/VoidPage";
 import { AdminLogin } from "./pages/AdminLogin";
 import { AdminDashboard } from "./pages/AdminDashboard";
+import { YouTubeDownloader } from "./components/YouTubeDownloader";
 import { useEffect } from "react";
 import { Toaster } from "sonner";
 
@@ -78,6 +79,13 @@ export default function App() {
               <>
                 <NavbarMix />
                 <VoidPage />
+                <Footer />
+              </>
+            } />
+            <Route path="/downloader" element={
+              <>
+                <NavbarMix />
+                <YouTubeDownloader />
                 <Footer />
               </>
             } />

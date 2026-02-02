@@ -1,5 +1,4 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowDown } from "lucide-react";
 
 export function Hero() {
   const { scrollY } = useScroll();
