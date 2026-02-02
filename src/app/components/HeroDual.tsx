@@ -1,5 +1,5 @@
-import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef, useState } from "react";
 import { ArrowDownRight } from "lucide-react";
 
 export function HeroDual() {

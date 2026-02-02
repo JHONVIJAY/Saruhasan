@@ -1,7 +1,7 @@
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
+import { useRef, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { cn } from "../lib/utils";
+
 
 const services = [
   {

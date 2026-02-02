@@ -3,12 +3,12 @@ import { motion } from "motion/react";
 import { PREMIUM_SLIDESHOW_MOVIES, TOTAL_FILMS_WATCHED, Movie } from "../lib/movies";
 import { Film, Sparkles, Play, Shuffle, RefreshCw } from "lucide-react";
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, FreeMode, Navigation, Pagination, EffectCoverflow } from 'swiper/modules';
-import { useMoviePosters, MovieWithPoster } from '../lib/useMoviePosters';
+import { Autoplay, Pagination } from 'swiper/modules';
+import { useMoviePosters } from '../lib/useMoviePosters';
 import { discoverRandomMovies, getPosterUrl, getBackdropUrl, getGenreName, getMovieCredits, findDirector, TMDBMovie } from '../lib/tmdb';
 import { getRatingDisplay, generateMovieId } from '../lib/movies-enhanced';
 import { recommendationEngine, RecommendationOptions } from '../lib/recommendation-engine';
-import { YouTubeDownloader } from './YouTubeDownloader';
+
 
 // Import Swiper styles
 import 'swiper/css';
@@ -19,7 +19,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/effect-coverflow';
 
 // Movie poster card component
-function MoviePoster({ movie, index, disableHoverEffect = false }: { movie: Movie; index: number; disableHoverEffect?: boolean }) {
+function MoviePoster({ movie, disableHoverEffect = false }: { movie: Movie; index: number; disableHoverEffect?: boolean }) {
   const [hasError, setHasError] = useState(false);
 
   const handleClick = () => {
@@ -158,7 +158,7 @@ function MoviePoster({ movie, index, disableHoverEffect = false }: { movie: Movi
 function MovieSuggesterCard({ movies }: { movies: Movie[] }) {
   const [activeTab, setActiveTab] = useState<'watched' | 'random'>('watched');
   const [suggestedMovie, setSuggestedMovie] = useState<Movie | null>(null);
-  const [recommendationReason, setRecommendationReason] = useState<string>('');
+  const [, setRecommendationReason] = useState<string>('');
   const [randomMovies, setRandomMovies] = useState<TMDBMovie[]>([]);
   const [loadingRandom, setLoadingRandom] = useState(false);
 
@@ -260,7 +260,7 @@ function MovieSuggesterCard({ movies }: { movies: Movie[] }) {
         diversify: true
       };
 
-      const { movie, reason, strategy } = recommendationEngine.recommendWithReason(movies, options);
+      const { movie, reason } = recommendationEngine.recommendWithReason(movies, options);
       
       if (movie) {
         setSuggestedMovie(movie);

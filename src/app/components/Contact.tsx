@@ -12,7 +12,7 @@ const textVariants = {
     transition: {
       delay: i * 0.05,
       duration: 1,
-      ease: [0.22, 1, 0.36, 1],
+      ease: [0.22, 1, 0.36, 1] as const,
     },
   }),
 };
