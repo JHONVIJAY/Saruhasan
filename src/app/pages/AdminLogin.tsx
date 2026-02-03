@@ -15,12 +15,11 @@ export function AdminLogin() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch("https://portfolio-backend-y3fq.onrender.com/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include",
         body: JSON.stringify({ username, password }),
       });
 
@@ -31,6 +30,7 @@ export function AdminLogin() {
       }
 
       toast.success("Login successful!");
+      localStorage.setItem("admin_token", data.token);
       localStorage.setItem("admin_user", JSON.stringify(data.user));
       navigate("/admin/dashboard");
     } catch (error: any) {
