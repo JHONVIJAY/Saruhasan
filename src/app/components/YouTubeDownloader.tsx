@@ -24,6 +24,13 @@ interface VideoInfo {
   thumbnailHQ: string;
 }
 
+interface DownloadResult {
+  success: boolean;
+  downloadUrl: string;
+  format: string;
+  quality?: string;
+}
+
 // Your Render backend URL
 const API_BASE = "https://portfolio-backend-y3fq.onrender.com";
 
@@ -32,13 +39,21 @@ const formatOptions = [
   { value: "audio", label: "MP3 Audio", icon: Music },
 ];
 
+const qualityOptions = [
+  { value: "720", label: "720p" },
+  { value: "480", label: "480p" },
+  { value: "360", label: "360p" },
+];
+
 export function YouTubeDownloader() {
   const [url, setUrl] = useState("");
   const [videoInfo, setVideoInfo] = useState<VideoInfo | null>(null);
   const [loading, setLoading] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
+  const [downloadResult, setDownloadResult] = useState<DownloadResult | null>(null);
   const [selectedFormat, setSelectedFormat] = useState("video");
+  const [selectedQuality, setSelectedQuality] = useState("720");
   const inputRef = useRef<HTMLInputElement>(null);
 
   const isValidYouTubeUrl = (url: string) => {
@@ -60,7 +75,7 @@ export function YouTubeDownloader() {
     setLoading(true);
     setError(null);
     setVideoInfo(null);
-    setDownloadUrl(null);
+    setDownloadResult(null);
 
     try {
       const response = await fetch(`${API_BASE}/api/youtube/info?url=${encodeURIComponent(url)}`);
@@ -81,8 +96,9 @@ export function YouTubeDownloader() {
   const handleDownload = async () => {
     if (!videoInfo) return;
 
-    setLoading(true);
+    setDownloading(true);
     setError(null);
+    setDownloadResult(null);
 
     try {
       const response = await fetch(`${API_BASE}/api/youtube/download`, {
@@ -90,7 +106,7 @@ export function YouTubeDownloader() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           url,
-          quality: selectedFormat === "audio" ? "audio" : "video",
+          quality: selectedFormat === "audio" ? "audio" : selectedQuality,
         }),
       });
 
@@ -100,14 +116,23 @@ export function YouTubeDownloader() {
         throw new Error(data.error || "Download failed");
       }
 
-      setDownloadUrl(data.downloadUrl);
-      
-      // Open download service in new tab
-      window.open(data.downloadUrl, '_blank');
+      if (data.success && data.downloadUrl) {
+        setDownloadResult(data);
+        // Trigger direct download
+        const link = document.createElement('a');
+        link.href = data.downloadUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        throw new Error("No download link received");
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Download failed");
+      setError(err instanceof Error ? err.message : "Download failed. Please try again.");
     } finally {
-      setLoading(false);
+      setDownloading(false);
     }
   };
 
@@ -115,7 +140,7 @@ export function YouTubeDownloader() {
     setUrl("");
     setVideoInfo(null);
     setError(null);
-    setDownloadUrl(null);
+    setDownloadResult(null);
     inputRef.current?.focus();
   };
 
@@ -146,7 +171,7 @@ export function YouTubeDownloader() {
           </h1>
           
           <p className="text-white/50 max-w-xl mx-auto">
-            Paste any YouTube URL and download videos or audio.
+            Paste any YouTube URL and download videos or audio directly.
             Fast, free, and no registration required.
           </p>
         </motion.div>
@@ -228,7 +253,6 @@ export function YouTubeDownloader() {
                   alt={videoInfo.title}
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    // Fallback to HQ thumbnail if maxres fails
                     (e.target as HTMLImageElement).src = videoInfo.thumbnailHQ;
                   }}
                 />
@@ -262,7 +286,7 @@ export function YouTubeDownloader() {
                 </div>
 
                 {/* Format Selection */}
-                <div className="mb-6">
+                <div className="mb-4">
                   <label className="block text-sm font-mono uppercase tracking-widest text-white/40 mb-3">
                     Format
                   </label>
@@ -285,10 +309,35 @@ export function YouTubeDownloader() {
                   </div>
                 </div>
 
+                {/* Quality Selection (only for video) */}
+                {selectedFormat === "video" && (
+                  <div className="mb-6">
+                    <label className="block text-sm font-mono uppercase tracking-widest text-white/40 mb-3">
+                      Quality
+                    </label>
+                    <div className="flex gap-3">
+                      {qualityOptions.map((option) => (
+                        <button
+                          key={option.value}
+                          onClick={() => setSelectedQuality(option.value)}
+                          className={cn(
+                            "flex-1 px-4 py-3 rounded-xl border transition-all duration-300 font-medium",
+                            selectedQuality === option.value
+                              ? "bg-white/10 border-white/30 text-white"
+                              : "bg-white/5 border-white/10 text-white/50 hover:border-white/20"
+                          )}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Download Button */}
                 <button
                   onClick={handleDownload}
-                  disabled={loading}
+                  disabled={downloading}
                   className={cn(
                     "w-full py-4 rounded-xl font-bold uppercase tracking-wider text-lg",
                     "bg-gradient-to-r from-red-600 via-purple-600 to-red-600",
@@ -298,22 +347,22 @@ export function YouTubeDownloader() {
                     "disabled:opacity-50 disabled:cursor-not-allowed"
                   )}
                 >
-                  {loading ? (
+                  {downloading ? (
                     <>
                       <Loader2 className="w-6 h-6 animate-spin" />
-                      Processing...
+                      Getting Download Link...
                     </>
                   ) : (
                     <>
                       <Download className="w-6 h-6" />
-                      Download {selectedFormat === "audio" ? "MP3" : "MP4"}
+                      Download {selectedFormat === "audio" ? "MP3" : `MP4 ${selectedQuality}`}
                     </>
                   )}
                 </button>
 
                 {/* Download Success */}
                 <AnimatePresence>
-                  {downloadUrl && (
+                  {downloadResult && (
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -322,19 +371,19 @@ export function YouTubeDownloader() {
                     >
                       <div className="flex items-center gap-3 mb-3">
                         <CheckCircle className="w-5 h-5 text-green-500" />
-                        <span className="text-green-400 font-semibold">Download Page Opened!</span>
+                        <span className="text-green-400 font-semibold">Download Started!</span>
                       </div>
                       <p className="text-white/60 text-sm mb-3">
-                        If the download page didn't open, click the button below:
+                        If download didn't start, click the button below:
                       </p>
                       <a
-                        href={downloadUrl}
+                        href={downloadResult.downloadUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-400 text-black font-bold rounded-lg transition-colors"
                       >
                         <ExternalLink className="w-4 h-4" />
-                        Open Download Page
+                        Download {downloadResult.format.toUpperCase()}
                       </a>
                     </motion.div>
                   )}
