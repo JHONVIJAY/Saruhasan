@@ -9,12 +9,14 @@ import {
   Film,
   AlertCircle,
   CheckCircle,
-  ExternalLink
+  ExternalLink,
+  Copy,
+  Check
 } from "lucide-react";
 import { cn } from "../lib/utils";
 
-// Using Cobalt API - a free, open-source video downloading service
-const COBALT_API = "https://api.cobalt.tools";
+// Backend API URL - uses your Render backend
+const API_BASE = "https://portfolio-backend-y3fq.onrender.com";
 
 const formatOptions = [
   { value: "720", label: "720p Video", icon: Film },
@@ -29,6 +31,7 @@ export function YouTubeDownloader() {
   const [error, setError] = useState<string | null>(null);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const [selectedFormat, setSelectedFormat] = useState("720");
+  const [copied, setCopied] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const isValidYouTubeUrl = (url: string) => {
@@ -52,45 +55,42 @@ export function YouTubeDownloader() {
     setDownloadUrl(null);
 
     try {
-      const response = await fetch(`${COBALT_API}/`, {
+      const response = await fetch(`${API_BASE}/api/youtube/download`, {
         method: "POST",
         headers: {
-          "Accept": "application/json",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           url: url,
-          downloadMode: selectedFormat === "audio" ? "audio" : "auto",
-          videoQuality: selectedFormat === "audio" ? "1080" : selectedFormat,
-          audioFormat: "mp3",
-          filenameStyle: "pretty",
+          quality: selectedFormat,
         }),
       });
 
       const data = await response.json();
 
-      if (data.status === "error") {
-        throw new Error(data.error?.code || "Download failed. Try a different video.");
+      if (!response.ok) {
+        throw new Error(data.error || "Download failed. Try again.");
       }
 
-      if (data.status === "redirect" || data.status === "tunnel") {
-        setDownloadUrl(data.url);
-        // Open download in new tab
-        window.open(data.url, "_blank");
-      } else if (data.status === "picker") {
-        // Multiple options available, use first one
-        if (data.picker && data.picker.length > 0) {
-          setDownloadUrl(data.picker[0].url);
-          window.open(data.picker[0].url, "_blank");
-        }
+      if (data.downloadUrl) {
+        setDownloadUrl(data.downloadUrl);
+        window.open(data.downloadUrl, "_blank");
       } else {
-        throw new Error("Unexpected response. Please try again.");
+        throw new Error("No download URL received");
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Something went wrong";
       setError(errorMessage);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const copyToClipboard = async () => {
+    if (downloadUrl) {
+      await navigator.clipboard.writeText(downloadUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
   };
 
@@ -252,16 +252,23 @@ export function YouTubeDownloader() {
               <p className="text-white/60 text-sm mb-4">
                 Your download should have started. If not, click the button below:
               </p>
-              <div className="flex gap-3">
+              <div className="flex gap-3 flex-wrap">
                 <a
                   href={downloadUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 py-3 bg-green-500 hover:bg-green-400 text-black font-bold rounded-xl transition-colors"
+                  className="flex-1 min-w-[150px] flex items-center justify-center gap-2 py-3 bg-green-500 hover:bg-green-400 text-black font-bold rounded-xl transition-colors"
                 >
                   <ExternalLink className="w-4 h-4" />
                   Open Download
                 </a>
+                <button
+                  onClick={copyToClipboard}
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl transition-colors"
+                >
+                  {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
+                  {copied ? "Copied!" : "Copy Link"}
+                </button>
                 <button
                   onClick={resetForm}
                   className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl transition-colors"
@@ -298,7 +305,7 @@ export function YouTubeDownloader() {
           className="text-center text-white/20 text-xs mt-12 max-w-md mx-auto"
         >
           This tool is for personal use only. Please respect copyright laws
-          and YouTube's Terms of Service. Powered by Cobalt.
+          and YouTube's Terms of Service.
         </motion.p>
       </div>
     </section>
