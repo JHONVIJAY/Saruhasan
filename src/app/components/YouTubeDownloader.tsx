@@ -40,6 +40,9 @@ const formatOptions = [
 ];
 
 const qualityOptions = [
+  { value: "2160", label: "4K" },
+  { value: "1440", label: "1440p" },
+  { value: "1080", label: "1080p" },
   { value: "720", label: "720p" },
   { value: "480", label: "480p" },
   { value: "360", label: "360p" },
@@ -53,7 +56,7 @@ export function YouTubeDownloader() {
   const [error, setError] = useState<string | null>(null);
   const [downloadResult, setDownloadResult] = useState<DownloadResult | null>(null);
   const [selectedFormat, setSelectedFormat] = useState("video");
-  const [selectedQuality, setSelectedQuality] = useState("720");
+  const [selectedQuality, setSelectedQuality] = useState("1080");
   const inputRef = useRef<HTMLInputElement>(null);
 
   const isValidYouTubeUrl = (url: string) => {
